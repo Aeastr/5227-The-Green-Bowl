@@ -1,0 +1,33 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="container">
+    <div class="jumbotron mt-4 p-5 bg-light rounded-3">
+        <h1 class="display-4">Welcome to The Green Bowl</h1>
+        <p class="lead">Experience the freshest and most delicious plant-based meals.</p>
+        <hr class="my-4">
+        <p>Explore our menu to discover a variety of vegan and vegetarian dishes made from locally sourced ingredients.</p>
+        <a class="btn btn-success btn-lg" asp-page="/Menu" role="button">View Menu</a>
+    </div>
+
+    <div class="row text-center mt-5">
+        <div class="col-md-4">
+            <img src="~/images/salad_bowl.jpeg" alt="Fresh Salad Bowl" class="img-fluid rounded-circle">
+            <h3 class="mt-3">Salad Bowls</h3>
+            <p>Our signature salads are a perfect blend of taste and nutrition.</p>
+        </div>
+        <div class="col-md-4">
+            <img src="~/images/smoothie.jpg" alt="Organic Smoothie" class="img-fluid rounded-circle">
+            <h3 class="mt-3">Organic Smoothies</h3>
+            <p>Refreshing smoothies made with organic fruits and vegetables.</p>
+        </div>
+        <div class="col-md-4">
+            <img src="~/images/veggie_wrap.jpg" alt="Veggie Wrap" class="img-fluid rounded-circle">
+            <h3 class="mt-3">Veggie Wraps</h3>
+            <p>A delightful mix of vegetables wrapped in whole-grain tortillas.</p>
+        </div>
+    </div>
+</div>
