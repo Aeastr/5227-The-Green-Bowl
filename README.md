@@ -12,15 +12,7 @@ Welcome to the **The Green Bowl**! This repository contains the source code for 
 - [Features](#features)
 - [Technologies Used](#technologies-used)
 - [Usage](#usage)
-- [Milestones](#milestones)
-  - [Milestone 1](#milestone-1)
-  - [Milestone 2](#milestone-2)
-  - [Milestone 3](#milestone-3)
-  - [Milestone 4](#milestone-4)
 - [Academic Note](#academic-note)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
 
 ## Introduction
 
