@@ -6,6 +6,10 @@ Welcome to the **The Green Bowl**! This repository contains the source code for 
   <img src="assets/restaurant-banner.jpg" alt="Restaurant Banner" width="600">
 </div>
 
+## Live Demo
+
+Experience the website live [**Hosted Here**](https://2304492.win.studentwebserver.co.uk/CO5227/).
+
 ## Table of Contents
 
 - [Introduction](#introduction)
