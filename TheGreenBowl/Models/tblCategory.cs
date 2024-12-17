@@ -2,7 +2,7 @@ namespace TheGreenBowl.Models;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-public class Category
+public class tblCategory
 {
     [Key]
     public int CategoryId { get; set; } // maps to category_id
@@ -14,5 +14,5 @@ public class Category
     public string Description { get; set; }
 
     // navigation property
-    public ICollection<MenuItem> MenuItems { get; set; }
+    public ICollection<tblMenuItem> MenuItems { get; set; }
 }

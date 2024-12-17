@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TheGreenBowl.Models
 {
-    public class MenuItem
+    public class tblMenuItem
     {
         [Key]
         public int ItemId { get; set; } // maps to item_id
@@ -25,9 +25,9 @@ namespace TheGreenBowl.Models
         public int? CategoryId { get; set; }
 
         // navigation property to Category
-        public Category Category { get; set; }
+        public tblCategory TblCategory { get; set; }
 
         // navigation property to Menu_MenuItem junction table
-        public ICollection<Menu_MenuItem> Menu_MenuItems { get; set; } // menus this item belongs to
+        public ICollection<tblMenu_MenuItem> Menu_MenuItems { get; set; } // menus this item belongs to
     }
 }

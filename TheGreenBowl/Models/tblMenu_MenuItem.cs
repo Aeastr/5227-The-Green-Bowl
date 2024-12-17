@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TheGreenBowl.Models
 {
-    public class Menu_MenuItem
+    public class tblMenu_MenuItem
     {
         // composite key will be configured in DbContext
 
@@ -10,7 +10,7 @@ namespace TheGreenBowl.Models
         public int ItemId { get; set; } // foreign key to MenuItem
 
         // navigation properties
-        public Menu Menu { get; set; }
-        public MenuItem MenuItem { get; set; }
+        public tblMenu TblMenu { get; set; }
+        public tblMenuItem TblMenuItem { get; set; }
     }
 }

@@ -3,9 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TheGreenBowl.Models
 {
-    public class Menu
+    public class tblMenu
     {
         [Key]
+        
         public int MenuId { get; set; } // maps to menu_id
 
         [Required]
@@ -15,6 +16,6 @@ namespace TheGreenBowl.Models
         public string Description { get; set; } // optional description
 
         // navigation property
-        public ICollection<Menu_MenuItem> MenuItems { get; set; } // items in this menu
+        public ICollection<tblMenu_MenuItem> MenuItems { get; set; } // items in this menu
     }
 }
