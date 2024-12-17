@@ -8,7 +8,7 @@ builder.Services.AddRazorPages();
 
 // Register your DbContext and SQL Server connection
 builder.Services.AddDbContext<TheGreenBowlContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DbContext")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("TheGreenBowlContext")));
 
 var app = builder.Build();
 
