@@ -7,27 +7,15 @@ namespace TheGreenBowl.Models
     public class tblMenuItem
     {
         [Key]
-        public int ItemId { get; set; } // maps to item_id
+        public int itemID { get; set; }
 
         [Required]
         [StringLength(255)]
-        public string Name { get; set; }
+        public string name { get; set; }
 
-        public string Description { get; set; }
-        
-        /// specifies the SQL column type and precision for the `Price` property
-        /// ensures that the Price is stored in the database with a precision of 10 digits in total
-        /// and 2 digits after the decimal point. This is ideal for representing currency values accurately!!
+        public string description { get; set; }
+
         [Column(TypeName = "decimal(10,2)")]
-        public decimal Price { get; set; }
-
-        // foreign key to Category
-        public int? CategoryId { get; set; }
-
-        // navigation property to Category
-        public tblCategory TblCategory { get; set; }
-
-        // navigation property to Menu_MenuItem junction table
-        public ICollection<tblMenu_MenuItem> Menu_MenuItems { get; set; } // menus this item belongs to
+        public decimal price { get; set; }
     }
 }

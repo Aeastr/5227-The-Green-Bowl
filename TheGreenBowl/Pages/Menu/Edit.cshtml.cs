@@ -30,7 +30,7 @@ namespace TheGreenBowl.Pages.Menu
                 return NotFound();
             }
 
-            var tblmenu =  await _context.Menus.FirstOrDefaultAsync(m => m.MenuId == id);
+            var tblmenu =  await _context.tblMenus.FirstOrDefaultAsync(m => m.menuID == id);
             if (tblmenu == null)
             {
                 return NotFound();
@@ -56,7 +56,7 @@ namespace TheGreenBowl.Pages.Menu
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!tblMenuExists(tblMenu.MenuId))
+                if (!tblMenuExists(tblMenu.menuID))
                 {
                     return NotFound();
                 }
@@ -71,7 +71,7 @@ namespace TheGreenBowl.Pages.Menu
 
         private bool tblMenuExists(int id)
         {
-            return _context.Menus.Any(e => e.MenuId == id);
+            return _context.tblMenus.Any(e => e.menuID == id);
         }
     }
 }

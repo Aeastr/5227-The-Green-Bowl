@@ -1,16 +1,14 @@
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
 
 namespace TheGreenBowl.Models
 {
     public class tblMenu_MenuItem
     {
-        // composite key will be configured in DbContext
-
-        public int MenuId { get; set; } // foreign key to Menu
-        public int ItemId { get; set; } // foreign key to MenuItem
+        public int menuID { get; set; } // foreign key to tblMenu
+        public int itemID { get; set; } // foreign key to tblMenuItem
 
         // navigation properties
-        public tblMenu TblMenu { get; set; }
-        public tblMenuItem TblMenuItem { get; set; }
+        public tblMenu menu { get; set; } // reference to the menu
+        public tblMenuItem menuItem { get; set; } // reference to the menu item
     }
 }

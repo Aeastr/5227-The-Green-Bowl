@@ -29,7 +29,7 @@ namespace TheGreenBowl.Pages.Menu
                 return NotFound();
             }
 
-            var tblmenu = await _context.Menus.FirstOrDefaultAsync(m => m.MenuId == id);
+            var tblmenu = await _context.tblMenus.FirstOrDefaultAsync(m => m.menuID == id);
 
             if (tblmenu == null)
             {
@@ -49,11 +49,11 @@ namespace TheGreenBowl.Pages.Menu
                 return NotFound();
             }
 
-            var tblmenu = await _context.Menus.FindAsync(id);
+            var tblmenu = await _context.tblMenus.FindAsync(id);
             if (tblmenu != null)
             {
                 tblMenu = tblmenu;
-                _context.Menus.Remove(tblMenu);
+                _context.tblMenus.Remove(tblMenu);
                 await _context.SaveChangesAsync();
             }
 

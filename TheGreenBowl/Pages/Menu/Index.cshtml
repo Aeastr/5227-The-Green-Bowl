@@ -2,41 +2,46 @@
 @model TheGreenBowl.Pages.Menu.IndexModel
 
 @{
-    ViewData["Title"] = "Index";
+ViewData["Title"] = "Menus";
 }
 
-<h1>Index</h1>
+<h1>Menus</h1>
 
 <p>
-    <a asp-page="Create">Create New</a>
+    <a asp-page="Create">Create New Menu</a>
 </p>
+
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.tblMenu[0].Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.tblMenu[0].Description)
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>Menu Name</th>
+        <th>Menu Description</th>
+        <th>Categories</th>
+        <th>Items Count</th>
+        <th>Actions</th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.tblMenu) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.MenuId">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.MenuId">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.MenuId">Delete</a>
-            </td>
-        </tr>
-}
+    @foreach (var menu in Model.Menus)
+    {
+    <tr>
+        <td>@menu.name</td>
+        <td>@menu.description</td>
+        <td>
+            <ul>
+                @foreach (var category in menu.Categories)
+                {
+                <li>@category.name</li>
+                }
+            </ul>
+        </td>
+        <td>@menu.TotalItems</td>
+        <td>
+            <a asp-page="./Edit" asp-route-id="@menu.menuID">Edit</a> |
+            <a asp-page="./Details" asp-route-id="@menu.menuID">Details</a> |
+            <a asp-page="./Delete" asp-route-id="@menu.menuID">Delete</a>
+        </td>
+    </tr>
+    }
     </tbody>
 </table>
