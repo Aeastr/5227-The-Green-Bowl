@@ -1,23 +1,25 @@
-/* set base font size for the document */
+/* Base font size for the document */
 html {
   font-size: 14px;
   position: relative;
   min-height: 100%;
 }
 
-/* increase font size on larger screens */
+/* Increase font size on larger screens */
 @media (min-width: 768px) {
   html {
     font-size: 16px;
   }
 }
 
-/* style the body element */
+/* Style the body element */
 body {
   margin-bottom: 200px; /* prevent footer from overlapping content */
-  background-color: #f5f5f5; 
+  background-color: #f5f5f5;
+  color: #333; /* default text color */
 }
 
+/* Button focus styles */
 .btn:focus,
 .btn:active:focus,
 .btn-link.nav-link:focus,
@@ -26,7 +28,40 @@ body {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
-/* make the navbar brand stand out */
+/* Navbar brand */
 .navbar-brand {
   font-weight: bold;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #1c1c1c; /* Dark background color */
+    color: #eaeaea; /* Light text color */
+  }
+
+  /* Buttons and form elements focus */
+  .btn:focus,
+  .btn:active:focus,
+  .btn-link.nav-link:focus,
+  .form-control:focus,
+  .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem #333, 0 0 0 0.25rem #1e90ff; /* Adjust colors for dark mode */
+  }
+
+  /* Navbar brand */
+  .navbar-brand {
+    color: #ffffff; /* Ensure the navbar brand stands out in dark mode */
+  }
+
+  /* Links */
+  a {
+    color: #58a6ff; /* Adjust link color for better contrast in dark mode */
+  }
+
+  a:visited {
+    color: #7da8ff;
+  }
+
+  /* Optional: Adjust other specific components for dark mode */
 }

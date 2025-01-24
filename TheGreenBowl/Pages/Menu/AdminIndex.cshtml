@@ -1,0 +1,47 @@
+@page
+@model TheGreenBowl.Pages.Menu.AdminIndexModel
+
+@{
+ViewData["Title"] = "[Admin] Menus";
+}
+
+<h1>[Admin] Menus</h1>
+
+<p>
+    <a asp-page="Create">Create New Menu</a>
+</p>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Menu Name</th>
+        <th>Menu Description</th>
+        <th>Categories</th>
+        <th>Items Count</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var menu in Model.Menus)
+    {
+    <tr>
+        <td>@menu.name</td>
+        <td>@menu.description</td>
+        <td>
+            <ul>
+                @foreach (var category in menu.Categories)
+                {
+                <li>@category.name</li>
+                }
+            </ul>
+        </td>
+        <td>@menu.TotalItems</td>
+        <td>
+            <a asp-page="./Edit" asp-route-id="@menu.menuID">Edit</a> |
+            <a asp-page="./Details" asp-route-id="@menu.menuID">View</a> |
+            <a asp-page="./Delete" asp-route-id="@menu.menuID">Delete</a>
+        </td>
+    </tr>
+    }
+    </tbody>
+</table>

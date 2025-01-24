@@ -2,14 +2,11 @@
 @model TheGreenBowl.Pages.Menu.IndexModel
 
 @{
-ViewData["Title"] = "Menus";
+    ViewData["Title"] = "Menus";
 }
 
 <h1>Menus</h1>
 
-<p>
-    <a asp-page="Create">Create New Menu</a>
-</p>
 
 <table class="table">
     <thead>
@@ -24,24 +21,22 @@ ViewData["Title"] = "Menus";
     <tbody>
     @foreach (var menu in Model.Menus)
     {
-    <tr>
-        <td>@menu.name</td>
-        <td>@menu.description</td>
-        <td>
-            <ul>
-                @foreach (var category in menu.Categories)
-                {
-                <li>@category.name</li>
-                }
-            </ul>
-        </td>
-        <td>@menu.TotalItems</td>
-        <td>
-            <a asp-page="./Edit" asp-route-id="@menu.menuID">Edit</a> |
-            <a asp-page="./Details" asp-route-id="@menu.menuID">Details</a> |
-            <a asp-page="./Delete" asp-route-id="@menu.menuID">Delete</a>
-        </td>
-    </tr>
+        <tr>
+            <td>@menu.name</td>
+            <td>@menu.description</td>
+            <td>
+                <ul>
+                    @foreach (var category in menu.Categories)
+                    {
+                        <li>@category.name</li>
+                    }
+                </ul>
+            </td>
+            <td>@menu.TotalItems</td>
+            <td>
+                <a asp-page="./Details" asp-route-id="@menu.menuID">View</a>
+            </td>
+        </tr>
     }
     </tbody>
 </table>

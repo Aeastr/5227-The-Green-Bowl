@@ -1,16 +1,17 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TheGreenBowl.Models;
 
 namespace TheGreenBowl.Data
 {
-    public class TheGreenBowlContext : DbContext
+    public class TheGreenBowlContext : IdentityDbContext<ApplicationUser> // Changed inheritance
     {
         public TheGreenBowlContext(DbContextOptions<TheGreenBowlContext> options)
             : base(options)
         {
         }
 
-        // DbSet for each table in the database
+        // Existing DbSets
         public DbSet<tblMenu> tblMenus { get; set; }
         public DbSet<tblMenuItem> MenuItems { get; set; }
         public DbSet<tblCategory> Categories { get; set; }
@@ -18,7 +19,7 @@ namespace TheGreenBowl.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(modelBuilder); // This is crucial for Identity
             
             modelBuilder.Entity<tblMenu>().ToTable("Menu");
             modelBuilder.Entity<tblMenuItem>().ToTable("MenuItem");

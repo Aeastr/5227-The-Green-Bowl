@@ -1,11 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.11" />
+      <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.11" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.11" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.11" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.11" />
@@ -17,7 +19,50 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Pages\Menu\" />
+      <_ContentIncludedByDefault Remove="Pages\Identity\Pages\Account\AccessDenied.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\Identity\Pages\Account\ForgotPassword.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\Identity\Pages\Account\Login.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\Identity\Pages\Account\Logout.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\Identity\Pages\Account\Manage\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\Identity\Pages\Account\Manage\_ManageNav.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\Identity\Pages\Account\Manage\_ViewImports.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\Identity\Pages\Account\Register.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\Identity\Pages\Account\ResetPassword.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\Identity\Pages\Account\_ViewImports.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\Identity\Pages\_ValidationScriptsPartial.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\Identity\Pages\_ViewImports.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\Identity\Pages\_ViewStart.cshtml" />
+      <_ContentIncludedByDefault Remove="Areas\Identity\Pages\Account\Login.cshtml" />
+      <_ContentIncludedByDefault Remove="Areas\Identity\Pages\Account\Logout.cshtml" />
+      <_ContentIncludedByDefault Remove="Areas\Identity\Pages\Account\Register.cshtml" />
+      <_ContentIncludedByDefault Remove="Areas\Identity\Pages\Account\_ViewImports.cshtml" />
+      <_ContentIncludedByDefault Remove="Areas\Identity\Pages\_ValidationScriptsPartial.cshtml" />
+      <_ContentIncludedByDefault Remove="Areas\Identity\Pages\_ViewImports.cshtml" />
+      <_ContentIncludedByDefault Remove="Areas\Identity\Pages\_ViewStart.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Areas\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Pages\Identity\Pages\Account\Login.cshtml" />
+      <UpToDateCheckInput Remove="Pages\Identity\Pages\Account\Logout.cshtml" />
+      <UpToDateCheckInput Remove="Pages\Identity\Pages\Account\Register.cshtml" />
+      <UpToDateCheckInput Remove="Pages\Identity\Pages\Account\_ViewImports.cshtml" />
+      <UpToDateCheckInput Remove="Pages\Identity\Pages\_ValidationScriptsPartial.cshtml" />
+      <UpToDateCheckInput Remove="Pages\Identity\Pages\_ViewImports.cshtml" />
+      <UpToDateCheckInput Remove="Pages\Identity\Pages\_ViewStart.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Pages\Identity\Pages\Account\Login.cshtml" />
+      <AdditionalFiles Include="Pages\Identity\Pages\Account\Logout.cshtml" />
+      <AdditionalFiles Include="Pages\Identity\Pages\Account\Register.cshtml" />
+      <AdditionalFiles Include="Pages\Identity\Pages\Account\_ViewImports.cshtml" />
+      <AdditionalFiles Include="Pages\Identity\Pages\_ValidationScriptsPartial.cshtml" />
+      <AdditionalFiles Include="Pages\Identity\Pages\_ViewImports.cshtml" />
+      <AdditionalFiles Include="Pages\Identity\Pages\_ViewStart.cshtml" />
     </ItemGroup>
 
 </Project>
