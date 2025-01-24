@@ -1,3 +1,9 @@
+# Academic Note
+
+> This project is part of an academic assessment. It demonstrates the progressive development of a web application using **ASP.NET Core**, aligning with educational objectives and deadlines.
+
+---
+
 # The Green Bowl - Restaurant Website Project
 
 This repository contains the source code for **The Green Bowl** restaurant website, developed using **ASP.NET Core**. The project progresses through four milestones, each introducing new features and enhancements.
@@ -82,7 +88,3 @@ This project is developed as part of an academic exercise to build a functional 
 - **Menu Page**: Browse the current menu items.
 - **Admin Page**: Manage menu items (available from Milestone 3).
 - **Account Features**: Register and log in to access personalized features (implemented in Milestone 4).
-
-## Academic Note
-
-This project is part of an academic assessment. It demonstrates the progressive development of a web application using **ASP.NET Core**, aligning with educational objectives and deadlines.
