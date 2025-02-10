@@ -23,6 +23,8 @@ namespace TheGreenBowl.Pages.Menu
 
         public async Task OnGetAsync()
         {
+            bool isAdmin = User.IsInRole("Admin");
+            
             Menus = await _context.tblMenus
                 .Include(m => m.Categories) // Include the relationship with tblMenuCategory
                 .ThenInclude(mc => mc.Category) // Load the tblCategory data
@@ -36,6 +38,9 @@ namespace TheGreenBowl.Pages.Menu
                     TotalItems = menu.MenuItems.Count // Count the related menu items
                 })
                 .ToListAsync();
+            
+            // Optionally, you can expose the isAdmin boolean to your view if needed:
+            ViewData["IsAdmin"] = isAdmin;
         }
     }
 

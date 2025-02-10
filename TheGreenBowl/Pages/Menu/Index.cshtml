@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Menus";
+    bool isAdmin = User.IsInRole("Admin");
 }
 
 <h1>Menus</h1>
@@ -16,6 +17,10 @@
         <th>Categories</th>
         <th>Items Count</th>
         <th>Actions</th>
+        @if (isAdmin)
+        {
+        <th>Admin Actions</th>
+        }
     </tr>
     </thead>
     <tbody>
@@ -36,6 +41,13 @@
             <td>
                 <a asp-page="./Details" asp-route-id="@menu.menuID">View</a>
             </td>
+            @if (isAdmin)
+            {
+            <td>
+                <a asp-page="./Edit" asp-route-id="@menu.menuID">Edit</a>
+                <a asp-page="./Delete" asp-route-id="@menu.menuID">Delete</a>
+            </td>
+            }
         </tr>
     }
     </tbody>
