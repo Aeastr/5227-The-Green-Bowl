@@ -2,14 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TheGreenBowl.Data;
 using TheGreenBowl.Models;
 
 namespace TheGreenBowl.Pages.Menu
 {
+    [Authorize(Roles = "Admin")]
     public class DeleteModel : PageModel
     {
         private readonly TheGreenBowl.Data.TheGreenBowlContext _context;

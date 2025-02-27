@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -11,6 +12,7 @@ using TheGreenBowl.Models;
 
 namespace TheGreenBowl.Pages.Menu
 {
+    [Authorize(Roles = "Admin")]
     public class CreateModel : PageModel
     {
         private readonly TheGreenBowl.Data.TheGreenBowlContext _context;
@@ -20,57 +22,116 @@ namespace TheGreenBowl.Pages.Menu
             _context = context;
         }
 
-        public IActionResult OnGet()
+        [BindProperty]
+        public tblMenu tblMenu { get; set; } = default!;
+        
+        [BindProperty]
+        public List<int> SelectedCategoryIds { get; set; } = new List<int>();
+        
+        public List<SelectListItem> AvailableCategories { get; set; } = new List<SelectListItem>();
+
+        public async Task<IActionResult> OnGetAsync()
         {
+            // Get all available categories
+            AvailableCategories = await _context.tblCategories
+                .Select(c => new SelectListItem
+                {
+                    Value = c.categoryID.ToString(),
+                    Text = c.name
+                })
+                .ToListAsync();
+                
             return Page();
         }
 
-        [BindProperty]
-        public tblMenu tblMenu { get; set; } = default!;
-
-        // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
             // Check if the form data is valid
             if (!ModelState.IsValid)
             {
-                // Log validation errors for debugging
-                foreach (var modelError in ModelState.Values.SelectMany(v => v.Errors))
-                {
-                    Console.WriteLine($"Validation Error: {modelError.ErrorMessage}");
-                }
+                // Reload categories for the form if validation fails
+                AvailableCategories = await _context.tblCategories
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.categoryID.ToString(),
+                        Text = c.name
+                    })
+                    .ToListAsync();
+                    
                 return Page();
             }
 
+            // Start a transaction to ensure all changes are applied together
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            
             try
             {
-                // Add the menu item to the database context
+                // Initialize the Categories collection if it's null
+                if (tblMenu.Categories == null)
+                {
+                    tblMenu.Categories = new List<tblMenuCategory>();
+                }
+                
+                // Add the menu to the database
                 _context.tblMenus.Add(tblMenu);
-
-                // Attempt to save changes to the database
                 await _context.SaveChangesAsync();
-
-                // Redirect to the Index page upon successful save
+                
+                // Now that we have the menu ID, add the category relationships
+                foreach (var categoryId in SelectedCategoryIds)
+                {
+                    tblMenu.Categories.Add(new tblMenuCategory
+                    {
+                        menuID = tblMenu.menuID,
+                        categoryID = categoryId
+                    });
+                }
+                
+                // Save the category relationships
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                
                 return RedirectToPage("./Index");
             }
             catch (DbUpdateException dbEx)
             {
+                await transaction.RollbackAsync();
+                
                 // Log database-specific errors for debugging
                 Console.WriteLine($"Database Update Error: {dbEx.InnerException?.Message ?? dbEx.Message}");
 
                 // Add a user-friendly error message
                 ModelState.AddModelError(string.Empty, "Unable to save changes. Please check your input and try again.");
-
+                
+                // Reload categories
+                AvailableCategories = await _context.tblCategories
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.categoryID.ToString(),
+                        Text = c.name
+                    })
+                    .ToListAsync();
+                    
                 return Page();
             }
             catch (Exception ex)
             {
+                await transaction.RollbackAsync();
+                
                 // Log general exceptions for debugging
                 Console.WriteLine($"General Error: {ex.Message}");
 
                 // Add a user-friendly error message
                 ModelState.AddModelError(string.Empty, "An unexpected error occurred. Please try again later.");
-
+                
+                // Reload categories
+                AvailableCategories = await _context.tblCategories
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.categoryID.ToString(),
+                        Text = c.name
+                    })
+                    .ToListAsync();
+                    
                 return Page();
             }
         }

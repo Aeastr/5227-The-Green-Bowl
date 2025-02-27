@@ -1,0 +1,28 @@
+@page
+@model TheGreenBowl.Pages.AccessDeniedModel
+@{
+    ViewData["Title"] = "Access Denied";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4><i class="fa-solid fa-exclamation-triangle me-2"></i>Access Denied</h4>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        You do not have permission to access this resource. This area is restricted to administrators only.
+                    </p>
+                    <p class="card-text">
+                        If you believe you should have access, please contact the system administrator.
+                    </p>
+                    <a asp-page="/Index" class="btn btn-primary">
+                        <i class="fa-solid fa-home me-2"></i>Return to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

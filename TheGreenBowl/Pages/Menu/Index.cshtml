@@ -2,12 +2,22 @@
 @model TheGreenBowl.Pages.Menu.IndexModel
 
 @{
-    ViewData["Title"] = "Menus";
-    bool isAdmin = User.IsInRole("Admin");
+ViewData["Title"] = "Menus";
+bool isAdmin = User.IsInRole("Admin");
 }
 
-<h1>Menus</h1>
+<!-- Make sure Font Awesome is included in your _Layout.cshtml or add it here -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Menus</h1>
+    @if (isAdmin)
+    {
+    <a asp-page="./Create" class="btn btn-success">
+        <i class="fa-solid fa-plus"></i> Add Menu
+    </a>
+    }
+</div>
 
 <table class="table">
     <thead>
@@ -16,7 +26,6 @@
         <th>Menu Description</th>
         <th>Categories</th>
         <th>Items Count</th>
-        <th>Actions</th>
         @if (isAdmin)
         {
         <th>Admin Actions</th>
@@ -26,29 +35,50 @@
     <tbody>
     @foreach (var menu in Model.Menus)
     {
-        <tr>
-            <td>@menu.name</td>
-            <td>@menu.description</td>
-            <td>
-                <ul>
-                    @foreach (var category in menu.Categories)
-                    {
-                        <li>@category.name</li>
-                    }
-                </ul>
-            </td>
-            <td>@menu.TotalItems</td>
-            <td>
-                <a asp-page="./Details" asp-route-id="@menu.menuID">View</a>
-            </td>
-            @if (isAdmin)
-            {
-            <td>
-                <a asp-page="./Edit" asp-route-id="@menu.menuID">Edit</a>
-                <a asp-page="./Delete" asp-route-id="@menu.menuID">Delete</a>
-            </td>
-            }
-        </tr>
+    <tr class="menu-row" data-menu-id="@menu.menuID" style="cursor: pointer;">
+        <td>@menu.name</td>
+        <td>@menu.description</td>
+        <td>
+            <ul>
+                @foreach (var category in menu.Categories)
+                {
+                <li>@category.name</li>
+                }
+            </ul>
+        </td>
+        <td>@menu.TotalItems</td>
+        @if (isAdmin)
+        {
+        <td>
+            <a asp-page="./Edit" asp-route-id="@menu.menuID" class="btn btn-sm btn-outline-primary" title="Edit">
+                <i class="fa-solid fa-pen-to-square"></i>
+            </a>
+            <a asp-page="./Delete" asp-route-id="@menu.menuID" class="btn btn-sm btn-outline-danger" title="Delete">
+                <i class="fa-solid fa-trash-can"></i>
+            </a>
+        </td>
+        }
+    </tr>
     }
     </tbody>
 </table>
+
+@section Scripts {
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuRows = document.querySelectorAll('.menu-row');
+
+        menuRows.forEach(row => {
+            row.addEventListener('click', function(e) {
+                // Don't navigate if clicking on action buttons
+                if (e.target.closest('a')) {
+                    return;
+                }
+
+                const menuId = this.getAttribute('data-menu-id');
+                window.location.href = './Menu/Details?id=' + menuId;
+            });
+        });
+    });
+</script>
+}

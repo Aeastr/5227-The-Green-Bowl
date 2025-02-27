@@ -21,6 +21,22 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<TheGreenBowlContext>();
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.AccessDeniedPath = "/AccessDenied";
+});
+
+builder.Services.AddRazorPages(options =>
+{
+    options.Conventions.AuthorizeFolder("/Menu/Admin", "AdminPolicy");
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
+});
+
+
 var app = builder.Build();
 
 // Seed roles and the base admin user before the app starts handling requests.
@@ -33,7 +49,7 @@ using (var scope = app.Services.CreateScope())
     // Define the role and admin user details
     string adminRole = "Admin";
     string adminEmail = "admin@example.com";
-    string adminPassword = "YourSecurePassword123!"; // Please replace with a stronger password
+    string adminPassword = "SecurePassword123!"; // Please replace with a stronger password
 
     // Check if the Admin role exists, and create it if it doesn't.
     if (!await roleManager.RoleExistsAsync(adminRole))

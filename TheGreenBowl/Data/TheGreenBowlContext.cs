@@ -13,9 +13,10 @@ namespace TheGreenBowl.Data
 
         // Existing DbSets
         public DbSet<tblMenu> tblMenus { get; set; }
-        public DbSet<tblMenuItem> MenuItems { get; set; }
-        public DbSet<tblCategory> Categories { get; set; }
-        public DbSet<tblMenu_MenuItem> Menu_MenuItems { get; set; }
+        public DbSet<tblMenuItem> tblMenuItems { get; set; }
+        public DbSet<tblCategory> tblCategories { get; set; }
+        public DbSet<tblMenu> tblMenuCategory { get; set; }
+        public DbSet<tblMenu_MenuItem> tblMenu_MenuItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
