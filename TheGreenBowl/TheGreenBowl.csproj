@@ -43,7 +43,6 @@
 
     <ItemGroup>
       <Folder Include="Areas\" />
-      <Folder Include="Pages\Categories\" />
     </ItemGroup>
 
     <ItemGroup>

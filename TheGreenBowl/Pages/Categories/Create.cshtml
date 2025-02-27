@@ -1,0 +1,41 @@
+@page
+@model TheGreenBowl.Pages.Categories.CreateModel
+@{
+ViewData["Title"] = "Create Category";
+}
+
+<h1>Create Category</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-8">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Category.name" class="control-label">Category Name</label>
+                <input asp-for="Category.name" class="form-control" />
+                <span asp-validation-for="Category.name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Category.description" class="control-label">Description</label>
+                <textarea asp-for="Category.description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Category.description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-plus"></i> Create
+                </button>
+                <a asp-page="./Index" class="btn btn-secondary">
+                    <i class="fa-solid fa-arrow-left"></i> Back to List
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
