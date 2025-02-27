@@ -28,10 +28,12 @@ namespace TheGreenBowl.Pages.Menu
                 return NotFound();
             }
 
-            // Load the menu with its related menu items
+            // Load the menu with its related menu items and categories
             var tblmenu = await _context.tblMenus
                 .Include(m => m.MenuItems) // Include the relationship to MenuItems
                 .ThenInclude(mm => mm.menuItem) // Include the actual menu item data
+                .Include(m => m.Categories) // Include the relationship to Categories
+                .ThenInclude(mc => mc.Category) // Include the actual category data
                 .FirstOrDefaultAsync(m => m.menuID == id);
 
             if (tblmenu == null)

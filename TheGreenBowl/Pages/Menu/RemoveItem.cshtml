@@ -1,0 +1,37 @@
+@page
+@model TheGreenBowl.Pages.Menu.RemoveItemModel
+@{
+ViewData["Title"] = "Remove Item from Menu";
+}
+
+<h1>Remove Item from Menu</h1>
+
+<div class="alert alert-warning">
+    <h3>Are you sure you want to remove this item from the menu?</h3>
+    <p>This will only remove the item from this menu, not delete it from the system.</p>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h5>Item Details</h5>
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">@Model.MenuItem.name</h5>
+        <p class="card-text">@Model.MenuItem.description</p>
+        <p class="card-text"><strong>Price:</strong> @Model.MenuItem.price.ToString("C")</p>
+    </div>
+</div>
+
+<form method="post">
+    <input type="hidden" asp-for="MenuId" />
+    <input type="hidden" asp-for="ItemId" />
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-danger">
+            <i class="fa-solid fa-trash"></i> Remove Item
+        </button>
+        <a asp-page="./Details" asp-route-id="@Model.MenuId" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Cancel
+        </a>
+    </div>
+</form>

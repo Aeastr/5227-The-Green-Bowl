@@ -1,0 +1,50 @@
+@page
+@model TheGreenBowl.Pages.Menu.EditItemModel
+@{
+ViewData["Title"] = "Edit Menu Item";
+}
+
+<h1>Edit Menu Item</h1>
+<h4>For Menu: @Model.MenuName</h4>
+
+<hr />
+<div class="row">
+    <div class="col-md-8">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="MenuId" />
+            <input type="hidden" asp-for="MenuItem.itemID" />
+
+            <div class="form-group mb-3">
+                <label asp-for="MenuItem.name" class="control-label">Item Name</label>
+                <input asp-for="MenuItem.name" class="form-control" />
+                <span asp-validation-for="MenuItem.name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="MenuItem.description" class="control-label">Description</label>
+                <textarea asp-for="MenuItem.description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="MenuItem.description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="MenuItem.price" class="control-label">Price</label>
+                <input asp-for="MenuItem.price" class="form-control" />
+                <span asp-validation-for="MenuItem.price" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-save"></i> Save Changes
+                </button>
+                <a asp-page="./Details" asp-route-id="@Model.MenuId" class="btn btn-secondary">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Menu
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -3,43 +3,85 @@
 
 @{
     ViewData["Title"] = $"{Model.tblMenu.name} Menu";
+    bool isAdmin = User.IsInRole("Admin");
 }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<div>
+<div class="d-flex justify-content-between align-items-center mb-3">
     <h1>@Html.DisplayFor(model => model.tblMenu.name)</h1>
-
-    <h4>@Html.DisplayFor(model => model.tblMenu.description)</h4>
-    <hr/>
+    <div>
+        @if (isAdmin)
+        {
+            <a asp-page="./Edit" asp-route-id="@Model.tblMenu.menuID" class="btn btn-outline-primary">
+                <i class="fa-solid fa-pen-to-square"></i> Edit Menu
+            </a>
+            <a asp-page="./AddItem" asp-route-menuId="@Model.tblMenu.menuID" class="btn btn-success ms-2">
+                <i class="fa-solid fa-plus"></i> Add Item
+            </a>
+        }
+        <a asp-page="./Index" class="btn btn-outline-secondary ms-2">
+            <i class="fa-solid fa-arrow-left"></i> Back to List
+        </a>
+    </div>
 </div>
 
-<h5>Items</h5>
-@if (Model.tblMenu.MenuItems?.Any() == true)
+<h4>@Html.DisplayFor(model => model.tblMenu.description)</h4>
+<hr/>
+
+<h5>Categories</h5>
+@if (Model.tblMenu.Categories?.Any() == true)
 {
-<table class="table table-striped">
-    <thead>
-    <tr>
-        <th>@Html.DisplayNameFor(model => model.tblMenu.MenuItems.First().menuItem.name)</th>
-        <th>@Html.DisplayNameFor(model => model.tblMenu.MenuItems.First().menuItem.description)</th>
-        <th>@Html.DisplayNameFor(model => model.tblMenu.MenuItems.First().menuItem.price)</th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var menuItem in Model.tblMenu.MenuItems)
-    {
-    <tr>
-        <td>@menuItem.menuItem.name</td>
-        <td>@menuItem.menuItem.description</td>
-        <td>@menuItem.menuItem.price.ToString("C")</td>
-    </tr>
-    }
-    </tbody>
-</table>
+    <div class="mb-4">
+        @foreach (var category in Model.tblMenu.Categories)
+        {
+            <span class="badge bg-info me-2">@category.Category.name</span>
+        }
+    </div>
 }
 else
 {
-<p>No menu items available for this menu.</p>
+    <p>No categories assigned to this menu.</p>
 }
 
-<div>
-    <a asp-page="./Edit" asp-route-id="@Model.tblMenu.menuID">Edit</a> |
-</div>
+<h5>Menu Items</h5>
+@if (Model.tblMenu.MenuItems?.Any() == true)
+{
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.tblMenu.MenuItems.First().menuItem.name)</th>
+            <th>@Html.DisplayNameFor(model => model.tblMenu.MenuItems.First().menuItem.description)</th>
+            <th>@Html.DisplayNameFor(model => model.tblMenu.MenuItems.First().menuItem.price)</th>
+            @if (isAdmin)
+            {
+                <th>Actions</th>
+            }
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var menuItem in Model.tblMenu.MenuItems)
+        {
+            <tr>
+                <td>@menuItem.menuItem.name</td>
+                <td>@menuItem.menuItem.description</td>
+                <td>@menuItem.menuItem.price.ToString("C")</td>
+                @if (isAdmin)
+                {
+                    <td>
+                        <a asp-page="./EditItem" asp-route-menuId="@Model.tblMenu.menuID" asp-route-itemId="@menuItem.itemID" class="btn btn-sm btn-outline-primary">
+                            <i class="fa-solid fa-pen"></i>
+                        </a>
+                        <a asp-page="./RemoveItem" asp-route-menuId="@Model.tblMenu.menuID" asp-route-itemId="@menuItem.itemID" class="btn btn-sm btn-outline-danger ms-1">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </td>
+                }
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No menu items available for this menu.</p>
+}
