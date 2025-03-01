@@ -15,7 +15,7 @@
             <a asp-page="./Edit" asp-route-id="@Model.tblMenu.menuID" class="btn btn-outline-primary">
                 <i class="fa-solid fa-pen-to-square"></i> Edit Menu
             </a>
-            <a asp-page="./AddItem" asp-route-menuId="@Model.tblMenu.menuID" class="btn btn-success ms-2">
+            <a asp-page="./Item/AddItem" asp-route-menuId="@Model.tblMenu.menuID" class="btn btn-success ms-2">
                 <i class="fa-solid fa-plus"></i> Add Item
             </a>
         }
@@ -49,6 +49,7 @@ else
     <table class="table table-striped">
         <thead>
         <tr>
+            <th>@Html.DisplayNameFor(model => model.tblMenu.MenuItems.First().menuItem.ImageData)</th>
             <th>@Html.DisplayNameFor(model => model.tblMenu.MenuItems.First().menuItem.name)</th>
             <th>@Html.DisplayNameFor(model => model.tblMenu.MenuItems.First().menuItem.description)</th>
             <th>@Html.DisplayNameFor(model => model.tblMenu.MenuItems.First().menuItem.price)</th>
@@ -61,17 +62,30 @@ else
         <tbody>
         @foreach (var menuItem in Model.tblMenu.MenuItems)
         {
-            <tr>
+            @* <tr> *@
+            <tr class="menuItem-row" data-item-id="@menuItem.menuItem.itemID" style="cursor: pointer;">
+                @{
+                    try
+                    {
+                        <td>
+                            <img class="menuItemImage" src="@string.Format("data: image/jpg;base64, {0}", Convert.ToBase64String(menuItem.menuItem.ImageData))" alt="@menuItem.menuItem.ImageDescription"/>
+                        </td>
+                    }
+                    catch
+                    {
+
+                    }
+                }
                 <td>@menuItem.menuItem.name</td>
                 <td>@menuItem.menuItem.description</td>
                 <td>@menuItem.menuItem.price.ToString("C")</td>
                 @if (isAdmin)
                 {
                     <td>
-                        <a asp-page="./EditItem" asp-route-menuId="@Model.tblMenu.menuID" asp-route-itemId="@menuItem.itemID" class="btn btn-sm btn-outline-primary">
+                        <a asp-page="./Item/EditItem" asp-route-menuId="@Model.tblMenu.menuID" asp-route-itemId="@menuItem.itemID" class="btn btn-sm btn-outline-primary">
                             <i class="fa-solid fa-pen"></i>
                         </a>
-                        <a asp-page="./RemoveItem" asp-route-menuId="@Model.tblMenu.menuID" asp-route-itemId="@menuItem.itemID" class="btn btn-sm btn-outline-danger ms-1">
+                        <a asp-page="./Item/RemoveItem" asp-route-menuId="@Model.tblMenu.menuID" asp-route-itemId="@menuItem.itemID" class="btn btn-sm btn-outline-danger ms-1">
                             <i class="fa-solid fa-trash"></i>
                         </a>
                     </td>
@@ -80,8 +94,30 @@ else
         }
         </tbody>
     </table>
+    
+    @section Scripts {
+        <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuRows = document.querySelectorAll('.menuItem-row');
+
+        menuRows.forEach(row => {
+            row.addEventListener('click', function(e) {
+                // Don't navigate if clicking on action buttons
+                if (e.target.closest('a')) {
+                    return;
+                }
+
+                const itemID = this.getAttribute('data-item-id');
+                window.location.href = './Item/ItemDetails?id=' + itemID;
+            });
+        });
+    });
+</script>
+    }
 }
 else
 {
     <p>No menu items available for this menu.</p>
 }
+
+

@@ -1,0 +1,49 @@
+@page
+@model TheGreenBowl.Pages.Menu.Item.ItemDetailsModel
+
+@{
+ViewData["Title"] = $"{Model.MenuItem.name} Details";
+bool isAdmin = User.IsInRole("Admin");
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>@Model.MenuItem.name</h1>
+    <div>
+        @if (isAdmin)
+        {
+        <a asp-page="./EditItem" asp-route-itemId="@Model.MenuItem.itemID" class="btn btn-outline-primary">
+            <i class="fa-solid fa-pen-to-square"></i> Edit Item
+        </a>
+        }
+        <a href="javascript:history.back()" class="btn btn-outline-secondary ms-2">
+            <i class="fa-solid fa-arrow-left"></i> Back
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        @if (Model.MenuItem.ImageData != null)
+        {
+        <div class="mb-4">
+            <img class="img-fluid rounded" src="@string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(Model.MenuItem.ImageData))" alt="@Model.MenuItem.ImageDescription" />
+        </div>
+        }
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Details</h4>
+                <hr />
+                <dl class="row">
+                    <dt class="col-sm-4">Description</dt>
+                    <dd class="col-sm-8">@Model.MenuItem.description</dd>
+
+                    <dt class="col-sm-4">Price</dt>
+                    <dd class="col-sm-8">@Model.MenuItem.price.ToString("C")</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;  // For IFormFile
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -36,6 +37,12 @@ namespace TheGreenBowl.Pages.Menu
 
         [BindProperty]
         public tblMenuItem NewItem { get; set; } = new tblMenuItem();
+
+        // This property will catch uploaded files. Even though the form allows multiple,
+        // you can loop through Request.Form.Files, which works with IFormFileCollection.
+        // You can also bind to a property as shown below if you expect multiple files.
+        [BindProperty]
+        public List<IFormFile> ImageFiles { get; set; }
 
         public List<SelectListItem> AvailableItems { get; set; } = new List<SelectListItem>();
 
@@ -82,19 +89,33 @@ namespace TheGreenBowl.Pages.Menu
 
             if (CreateNewItem)
             {
-                // Validate the new item
+                // Validate the new item as needed
                 if (!ModelState.IsValid)
                 {
-                    // Reload the available items for the dropdown
                     await LoadAvailableItems(menu);
                     return Page();
                 }
 
-                // Add the new item to the database
+                // Process the file upload(s)
+                if (Request.Form.Files.Count > 0)
+                {
+                    foreach (var file in Request.Form.Files)
+                    {
+                        if (file.Length > 0)
+                        {
+                            using (MemoryStream ms = new MemoryStream())
+                            {
+                                await file.CopyToAsync(ms);
+                                NewItem.ImageData = ms.ToArray();
+                            }
+                        }
+                    }
+                }
+
                 _context.tblMenuItems.Add(NewItem);
                 await _context.SaveChangesAsync();
 
-                // Add the new item to the menu
+                // Now add the new item to the menu
                 menu.MenuItems.Add(new tblMenu_MenuItem
                 {
                     menuID = MenuId,
@@ -103,7 +124,6 @@ namespace TheGreenBowl.Pages.Menu
             }
             else
             {
-                // Validate the selected item
                 if (!SelectedItemId.HasValue)
                 {
                     ModelState.AddModelError("SelectedItemId", "Please select an item to add.");
@@ -111,7 +131,6 @@ namespace TheGreenBowl.Pages.Menu
                     return Page();
                 }
 
-                // Add the selected item to the menu
                 menu.MenuItems.Add(new tblMenu_MenuItem
                 {
                     menuID = MenuId,

@@ -1,6 +1,5 @@
 @page
 @model TheGreenBowl.Pages.Menu.CreateModel
-
 @{
 ViewData["Title"] = "Create Menu";
 }
@@ -27,20 +26,35 @@ ViewData["Title"] = "Create Menu";
             </div>
 
             <div class="form-group mb-3">
-                <label class="control-label">Categories</label>
-                <div class="row">
+                <div class="d-flex justify-content-between align-items-center">
+                    <label class="control-label">Categories</label>
+                    <a href="javascript:void(0)" class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                        <i class="fa-solid fa-plus"></i> New Category
+                    </a>
+                </div>
+                <div class="row mt-2">
                     @foreach (var category in Model.AvailableCategories)
                     {
                     <div class="col-md-4 mb-2">
-                        <div class="form-check">
-                            <input type="checkbox"
-                                   class="form-check-input"
-                                   name="SelectedCategoryIds"
-                                   value="@category.Value"
-                                   id="category_@category.Value" />
-                            <label class="form-check-label" for="category_@category.Value">
-                                @category.Text
-                            </label>
+                        <div class="d-flex align-items-center">
+                            <div class="form-check">
+                                <input type="checkbox"
+                                       class="form-check-input"
+                                       name="SelectedCategoryIds"
+                                       value="@category.Value"
+                                       id="category_@category.Value" />
+                                <label class="form-check-label" for="category_@category.Value">
+                                    @category.Text
+                                </label>
+                            </div>
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-primary ms-2 edit-category-btn"
+                                    data-category-id="@category.Value"
+                                    data-category-name="@category.Text"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editCategoryModal">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
                         </div>
                     </div>
                     }
@@ -59,6 +73,206 @@ ViewData["Title"] = "Create Menu";
     </div>
 </div>
 
+<!-- Edit Category Modal -->
+<div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editCategoryModalLabel">Edit Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editCategoryForm">
+                <div class="modal-body">
+                    <input type="hidden" id="editCategoryId" name="categoryId" />
+                    <div class="mb-3">
+                        <label for="editCategoryName" class="form-label">Category Name</label>
+                        <input type="text" class="form-control" id="editCategoryName" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editCategoryDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="editCategoryDescription" name="description" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add Category Modal -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCategoryModalLabel">Add New Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="addCategoryForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="newCategoryName" class="form-label">Category Name</label>
+                        <input type="text" class="form-control" id="newCategoryName" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newCategoryDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="newCategoryDescription" name="description" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Add Category</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
 @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Edit Category Modal
+        const editButtons = document.querySelectorAll('.edit-category-btn');
+        const editCategoryForm = document.getElementById('editCategoryForm');
+        const editCategoryId = document.getElementById('editCategoryId');
+        const editCategoryName = document.getElementById('editCategoryName');
+
+        // Load category data into edit modal
+        editButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const categoryId = this.getAttribute('data-category-id');
+                const categoryName = this.getAttribute('data-category-name');
+
+                editCategoryId.value = categoryId;
+                editCategoryName.value = categoryName;
+
+                // Fetch the category description via AJAX
+                fetch(`/api/Categories/${categoryId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('editCategoryDescription').value = data.description || '';
+                    })
+                    .catch(error => console.error('Error fetching category details:', error));
+            });
+        });
+
+        // Handle edit category form submission
+        editCategoryForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const categoryId = editCategoryId.value;
+            const categoryName = editCategoryName.value;
+            const categoryDescription = document.getElementById('editCategoryDescription').value;
+
+            // Send update request via AJAX
+            fetch(`/api/Categories/${categoryId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    categoryID: parseInt(categoryId),
+                    name: categoryName,
+                    description: categoryDescription
+                })
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // Update the category name in the checkbox label
+                        const label = document.querySelector(`label[for="category_${categoryId}"]`);
+                        if (label) {
+                            label.textContent = categoryName;
+                        }
+
+                        // Update the data attribute on the edit button
+                        const button = document.querySelector(`.edit-category-btn[data-category-id="${categoryId}"]`);
+                        if (button) {
+                            button.setAttribute('data-category-name', categoryName);
+                        }
+
+                        // Close the modal
+                        bootstrap.Modal.getInstance(document.getElementById('editCategoryModal')).hide();
+                    } else {
+                        alert('Failed to update category. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating category:', error);
+                    alert('An error occurred while updating the category.');
+                });
+        });
+
+        // Handle add category form submission
+        const addCategoryForm = document.getElementById('addCategoryForm');
+
+        addCategoryForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const categoryName = document.getElementById('newCategoryName').value;
+            const categoryDescription = document.getElementById('newCategoryDescription').value;
+
+            // Send create request via AJAX
+            fetch('/api/Categories', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: categoryName,
+                    description: categoryDescription
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Add the new category to the list of checkboxes
+                    const categoriesRow = document.querySelector('.form-group .row');
+                    const newCategoryHtml = `
+                        <div class="col-md-4 mb-2">
+                            <div class="d-flex align-items-center">
+                                <div class="form-check">
+                                    <input type="checkbox" 
+                                           class="form-check-input" 
+                                           name="SelectedCategoryIds" 
+                                           value="${data.categoryID}" 
+                                           id="category_${data.categoryID}"
+                                           checked />
+                                    <label class="form-check-label" for="category_${data.categoryID}">
+                                        ${data.name}
+                                    </label>
+                                </div>
+                                <button type="button" 
+                                        class="btn btn-sm btn-outline-primary ms-2 edit-category-btn" 
+                                        data-category-id="${data.categoryID}" 
+                                        data-category-name="${data.name}"
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#editCategoryModal">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    categoriesRow.insertAdjacentHTML('beforeend', newCategoryHtml);
+
+                    // Add event listener to the new edit button
+                    const newEditButton = document.querySelector(`.edit-category-btn[data-category-id="${data.categoryID}"]`);
+                    newEditButton.addEventListener('click', function() {
+                        editCategoryId.value = data.categoryID;
+                        editCategoryName.value = data.name;
+                        document.getElementById('editCategoryDescription').value = data.description || '';
+                    });
+
+                    // Close the modal and reset the form
+                    bootstrap.Modal.getInstance(document.getElementById('addCategoryModal')).hide();
+                    addCategoryForm.reset();
+                })
+                .catch(error => {
+                    console.error('Error creating category:', error);
+                    alert('An error occurred while creating the category.');
+                });
+        });
+    });
+</script>
 }

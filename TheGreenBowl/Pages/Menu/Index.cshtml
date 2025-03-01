@@ -11,12 +11,25 @@ bool isAdmin = User.IsInRole("Admin");
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>Menus</h1>
+    
     @if (isAdmin)
     {
-    <a asp-page="./Create" class="btn btn-success">
-        <i class="fa-solid fa-plus"></i> Add Menu
-    </a>
+        <a asp-page="./Create" class="btn btn-success">
+            <i class="fa-solid fa-plus"></i> Add Menu
+        </a>
     }
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <form asp-page="./SearchResults" method="get" class="d-flex">
+            <input type="text" name="q" class="form-control me-2"
+                   placeholder="Search menus and items..."/>
+            <button type="submit" class="btn btn-outline-primary">
+                <i class="fa-solid fa-search"></i> Search
+            </button>
+        </form>
+    </div>
 </div>
 
 <table class="table">

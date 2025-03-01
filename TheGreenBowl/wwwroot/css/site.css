@@ -1,67 +1,111 @@
-/* Base font size for the document */
-html {
-  font-size: 14px;
-  position: relative;
-  min-height: 100%;
+/* NOTES TO SELF:
+   - Need home/menu dead center
+   - Account hugging the right edge
+   - Keep mobile layout clean
+*/
+
+:root {
+  /* Define our colors as variables while we're at it */
+  --bs-body-bg: #F7F7F3;
 }
 
-/* Increase font size on larger screens */
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
+.custom-navbar {
+  background-color: #EFEDE5;
+  padding: 1rem 0;
+}
+
+/* Structure the navbar with flexbox for better control */
+.navbar-collapse {
+  display: flex;
+  justify-content: space-between; /* Creates space between center and right */
+}
+
+/* Center container for home/menu */
+.center-nav {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 2rem;
+}
+
+/* Right container for account */
+.right-nav {
+  margin-left: auto; /* Pushes account to far right */
+}
+
+.custom-navbar .nav-link {
+  font-family: 'Inter';
+  font-style: italic;
+  color: #415942;
+  text-transform: lowercase;
+  font-size: 1rem;
+  padding: 0.5rem 1.5rem !important;
+  transition: font-style 0.3sease, color 0.3 sease, font-weight 0.3sease;
+}
+
+.custom-navbar .nav-link:hover {
+  /*font-style: normal;*/
+  color: black;
+  font-weight: 500;
+  transition: font-style 0.3sease, color 0.3sease, font-weight 0.3sease;
+}
+
+/* Mobile adjustments */
+@media (max-width: 991.98px) {
+  .center-nav {
+    position: static;
+    transform: none;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .navbar-collapse {
+    text-align: center;
+  }
+
+  .right-nav {
+    margin: 0;
+  }
+
+  .custom-navbar .nav-link {
+    padding: 0.5rem 0 !important;
   }
 }
 
-/* Style the body element */
-body {
-  margin-bottom: 200px; /* prevent footer from overlapping content */
-  background-color: #f5f5f5;
-  color: #333; /* default text color */
+/* NOTES TO SELF:
+   - Style dropdown to match our minimal theme
+   - Use our beige/green colors
+*/
+
+/* Dropdown styling */
+.dropdown-menu {
+  background-color: #EFEDE5;
+  border: none;
+  border-radius: 0;
+  padding: 0.5rem 0;
+  margin-top: 0.5rem;
 }
 
-/* Button focus styles */
-.btn:focus,
-.btn:active:focus,
-.btn-link.nav-link:focus,
-.form-control:focus,
-.form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+/* Remove dropdown arrow */
+.dropdown-toggle::after {
+  display: none;
 }
 
-/* Navbar brand */
-.navbar-brand {
-  font-weight: bold;
+/* Style dropdown items */
+.dropdown-menu .nav-link {
+  padding: 0.5rem 1.5rem !important;
+  font-size: 0.9rem;
 }
 
-/* Dark mode styles */
-@media (prefers-color-scheme: dark) {
-  body {
-    background-color: #1c1c1c; /* Dark background color */
-    color: #eaeaea; /* Light text color */
-  }
-
-  /* Buttons and form elements focus */
-  .btn:focus,
-  .btn:active:focus,
-  .btn-link.nav-link:focus,
-  .form-control:focus,
-  .form-check-input:focus {
-    box-shadow: 0 0 0 0.1rem #333, 0 0 0 0.25rem #1e90ff; /* Adjust colors for dark mode */
-  }
-
-  /* Navbar brand */
-  .navbar-brand {
-    color: #ffffff; /* Ensure the navbar brand stands out in dark mode */
-  }
-
-  /* Links */
-  a {
-    color: #58a6ff; /* Adjust link color for better contrast in dark mode */
-  }
-
-  a:visited {
-    color: #7da8ff;
-  }
-
-  /* Optional: Adjust other specific components for dark mode */
+/* Hover state */
+.dropdown-menu .nav-link:hover {
+  background-color: rgba(65, 89, 66, 0.1);
 }
+
+/* Menu Items Index Page */
+
+img.menuItemImage {
+  max-height: 150px;
+}
+

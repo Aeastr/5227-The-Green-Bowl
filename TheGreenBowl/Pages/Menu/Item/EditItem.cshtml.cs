@@ -1,13 +1,16 @@
 using System;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using TheGreenBowl.Data;
 using TheGreenBowl.Models;
 
-namespace TheGreenBowl.Pages.Menu
+namespace TheGreenBowl.Pages.Menu.Item
 {
     [Authorize(Roles = "Admin")]
     public class EditItemModel : PageModel
@@ -20,36 +23,19 @@ namespace TheGreenBowl.Pages.Menu
         }
 
         [BindProperty]
-        public int MenuId { get; set; }
-
-        [BindProperty]
         public tblMenuItem MenuItem { get; set; }
 
-        public string MenuName { get; set; }
+        [BindProperty]
+        public string ReturnUrl { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int menuId, int itemId)
+        public async Task<IActionResult> OnGetAsync(int itemId, string returnUrl = null)
         {
-            MenuId = menuId;
-
-            var menu = await _context.tblMenus
-                .FirstOrDefaultAsync(m => m.menuID == menuId);
-
-            if (menu == null)
-            {
+            MenuItem = await _context.tblMenuItems.FirstOrDefaultAsync(mi => mi.itemID == itemId);
+            if (MenuItem == null)
                 return NotFound();
-            }
 
-            MenuName = menu.name;
-
-            var menuItem = await _context.tblMenuItems
-                .FirstOrDefaultAsync(mi => mi.itemID == itemId);
-
-            if (menuItem == null)
-            {
-                return NotFound();
-            }
-
-            MenuItem = menuItem;
+            // Set return URL (either from parameter or default to JavaScript history back)
+            ReturnUrl = returnUrl ?? "javascript:history.back()";
 
             return Page();
         }
@@ -58,29 +44,34 @@ namespace TheGreenBowl.Pages.Menu
         {
             if (!ModelState.IsValid)
             {
-                var menu = await _context.tblMenus
-                    .FirstOrDefaultAsync(m => m.menuID == MenuId);
-                
-                if (menu != null)
-                {
-                    MenuName = menu.name;
-                }
-                
                 return Page();
             }
 
-            var existingItem = await _context.tblMenuItems
-                .FirstOrDefaultAsync(mi => mi.itemID == MenuItem.itemID);
-
+            var existingItem = await _context.tblMenuItems.FirstOrDefaultAsync(mi => mi.itemID == MenuItem.itemID);
             if (existingItem == null)
-            {
                 return NotFound();
-            }
 
-            // Update the item properties
+            // Update properties
             existingItem.name = MenuItem.name;
             existingItem.description = MenuItem.description;
             existingItem.price = MenuItem.price;
+            existingItem.ImageDescription = MenuItem.ImageDescription;
+
+            // Process new image upload if any
+            if (Request.Form.Files.Count > 0)
+            {
+                foreach (var file in Request.Form.Files)
+                {
+                    if (file.Length > 0)
+                    {
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            await file.CopyToAsync(ms);
+                            existingItem.ImageData = ms.ToArray();
+                        }
+                    }
+                }
+            }
 
             try
             {
@@ -98,7 +89,8 @@ namespace TheGreenBowl.Pages.Menu
                 }
             }
 
-            return RedirectToPage("./Details", new { id = MenuId });
+            // Return to the provided return URL or use JavaScript history back
+            return Redirect(ReturnUrl);
         }
 
         private async Task<bool> MenuItemExists(int id)

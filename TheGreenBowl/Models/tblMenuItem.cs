@@ -17,5 +17,9 @@ namespace TheGreenBowl.Models
 
         [Column(TypeName = "decimal(10,2)")]
         public decimal price { get; set; }
+        
+        public byte[] ImageData { get; set; }
+        
+        public string ImageDescription { get; set; }
     }
 }
