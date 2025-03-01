@@ -5,7 +5,14 @@
     ViewData["Title"] = $"{Model.tblMenu.name} Menu";
     bool isAdmin = User.IsInRole("Admin");
 }
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- Optional: Display a success message -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h1>@Html.DisplayFor(model => model.tblMenu.name)</h1>
@@ -48,76 +55,117 @@ else
 {
     <table class="table table-striped">
         <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(model => model.tblMenu.MenuItems.First().menuItem.ImageData)</th>
-            <th>@Html.DisplayNameFor(model => model.tblMenu.MenuItems.First().menuItem.name)</th>
-            <th>@Html.DisplayNameFor(model => model.tblMenu.MenuItems.First().menuItem.description)</th>
-            <th>@Html.DisplayNameFor(model => model.tblMenu.MenuItems.First().menuItem.price)</th>
-            @if (isAdmin)
-            {
-                <th>Actions</th>
-            }
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var menuItem in Model.tblMenu.MenuItems)
-        {
-            @* <tr> *@
-            <tr class="menuItem-row" data-item-id="@menuItem.menuItem.itemID" style="cursor: pointer;">
-                @{
-                    try
-                    {
-                        <td>
-                            <img class="menuItemImage" src="@string.Format("data: image/jpg;base64, {0}", Convert.ToBase64String(menuItem.menuItem.ImageData))" alt="@menuItem.menuItem.ImageDescription"/>
-                        </td>
-                    }
-                    catch
-                    {
-
-                    }
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.tblMenu.MenuItems.First().menuItem.ImageData)</th>
+                <th>@Html.DisplayNameFor(model => model.tblMenu.MenuItems.First().menuItem.name)</th>
+                <th>@Html.DisplayNameFor(model => model.tblMenu.MenuItems.First().menuItem.description)</th>
+                <th>@Html.DisplayNameFor(model => model.tblMenu.MenuItems.First().menuItem.price)</th>
+                @* Only show the "Actions" column if the user is logged in *@
+                @if (Model.IsUserLoggedIn) 
+                {
+                    <th>Actions</th>
                 }
-                <td>@menuItem.menuItem.name</td>
-                <td>@menuItem.menuItem.description</td>
-                <td>@menuItem.menuItem.price.ToString("C")</td>
                 @if (isAdmin)
                 {
-                    <td>
-                        <a asp-page="./Item/EditItem" asp-route-menuId="@Model.tblMenu.menuID" asp-route-itemId="@menuItem.itemID" class="btn btn-sm btn-outline-primary">
-                            <i class="fa-solid fa-pen"></i>
-                        </a>
-                        <a asp-page="./Item/RemoveItem" asp-route-menuId="@Model.tblMenu.menuID" asp-route-itemId="@menuItem.itemID" class="btn btn-sm btn-outline-danger ms-1">
-                            <i class="fa-solid fa-trash"></i>
-                        </a>
-                    </td>
+                <th>Admin</th>
                 }
             </tr>
+        </thead>
+        <tbody>
+            @foreach (var menuItem in Model.tblMenu.MenuItems)
+            {
+                <tr class="menuItem-row" data-item-id="@menuItem.menuItem.itemID" style="cursor: pointer;">
+                    <td>
+                        @* Display the menu item image if available *@
+                        @if (menuItem.menuItem.ImageData != null)
+                        {
+                            <img class="menuItemImage" src="data:image/jpg;base64,@Convert.ToBase64String(menuItem.menuItem.ImageData)" alt="@menuItem.menuItem.ImageDescription" />
+                        }
+                    </td>
+                    <td>@menuItem.menuItem.name</td>
+                    <td>@menuItem.menuItem.description</td>
+                    <td>@menuItem.menuItem.price.ToString("C")</td>
+                    @if (Model.IsUserLoggedIn)
+        {
+            <td>
+                @* Check if the basket already contains this item *@
+                @if (Model.BasketQuantities.ContainsKey(menuItem.menuItem.itemID))
+                {
+                    <!-- Decrement button -->
+                    <form method="post" asp-page-handler="Decrement" class="d-inline">
+                        <input type="hidden" name="itemId" value="@menuItem.menuItem.itemID" />
+                        <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+                    </form>
+                    
+                    <!-- Display current quantity -->
+                    <span class="mx-2">
+                        @Model.BasketQuantities[menuItem.menuItem.itemID]
+                    </span>
+                    
+                    <!-- Increment button -->
+                    <form method="post" asp-page-handler="Increment" class="d-inline">
+                        <input type="hidden" name="itemId" value="@menuItem.menuItem.itemID" />
+                        <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+                        <button type="submit" class="btn btn-sm btn-outline-success">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <!-- Render the simple "Add to Basket" button when item not in basket -->
+                    <form method="post" asp-page-handler="AddToBasket" style="display:inline;">
+                        <input type="hidden" name="itemId" value="@menuItem.menuItem.itemID" />
+                        <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+                        <button type="submit" class="btn btn-sm btn-outline-primary">
+                            <i class="fa-solid fa-cart-plus"></i> Add to Basket
+                        </button>
+                    </form>
+                }
+            </td>
         }
+                    @if (isAdmin)
+                    {
+                        <td>
+                            @if (isAdmin)
+                            {
+                            <a asp-page="./Item/EditItem" asp-route-menuId="@Model.tblMenu.menuID" asp-route-itemId="@menuItem.menuItem.itemID" class="btn btn-sm btn-outline-primary">
+                                <i class="fa-solid fa-pen"></i>
+                            </a>
+                            <a asp-page="./Item/RemoveItem" asp-route-menuId="@Model.tblMenu.menuID" asp-route-itemId="@menuItem.menuItem.itemID" class="btn btn-sm btn-outline-danger ms-1">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+                            }
+                        </td>
+                    }
+                </tr>
+            }
         </tbody>
     </table>
     
     @section Scripts {
         <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const menuRows = document.querySelectorAll('.menuItem-row');
-
-        menuRows.forEach(row => {
-            row.addEventListener('click', function(e) {
-                // Don't navigate if clicking on action buttons
-                if (e.target.closest('a')) {
-                    return;
-                }
-
-                const itemID = this.getAttribute('data-item-id');
-                window.location.href = './Item/ItemDetails?id=' + itemID;
+            // Optional: Add JavaScript for row click behavior if desired
+            document.addEventListener('DOMContentLoaded', function() {
+                const menuRows = document.querySelectorAll('.menuItem-row');
+                menuRows.forEach(row => {
+                    row.addEventListener('click', function(e) {
+                        // Prevent navigation if clicking on an action button
+                        if (e.target.closest('a')) {
+                            return;
+                        }
+                        const itemID = this.getAttribute('data-item-id');
+                        window.location.href = './Item/ItemDetails?id=' + itemID;
+                    });
+                });
             });
-        });
-    });
-</script>
+        </script>
     }
 }
 else
 {
     <p>No menu items available for this menu.</p>
 }
-
-
