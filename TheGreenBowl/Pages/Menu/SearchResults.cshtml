@@ -1,0 +1,121 @@
+@page
+@model TheGreenBowl.Pages.Menu.SearchResultsModel
+
+@{
+ViewData["Title"] = "Search Results";
+bool isAdmin = User.IsInRole("Admin");
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Search Results</h1>
+    <a asp-page="./Index" class="btn btn-outline-secondary">
+        <i class="fa-solid fa-arrow-left"></i> Back to Menus
+    </a>
+</div>
+
+<!-- Search Box -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <form method="get" class="d-flex">
+            <input type="text" name="q" value="@Model.q"
+                   class="form-control me-2" placeholder="Search menus and items..."/>
+            <button type="submit" class="btn btn-outline-primary">
+                <i class="fa-solid fa-search"></i> Search
+            </button>
+        </form>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.q))
+{
+<h4 class="mb-3">Results for "@Model.q"</h4>
+}
+
+@foreach (var menu in Model.SearchResults)
+{
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">@menu.name</h5>
+        <div>
+            <a asp-page="./Details" asp-route-id="@menu.menuID" class="btn btn-sm btn-outline-primary">
+                <i class="fa-solid fa-eye"></i> View Menu
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <p class="card-text">@menu.description</p>
+
+        @if (menu.Categories?.Any() == true)
+        {
+        <div class="mb-3">
+            @foreach (var category in menu.Categories)
+            {
+            <span class="badge bg-info me-2">@category.Category.name</span>
+            }
+        </div>
+        }
+
+        @if (menu.MenuItems?.Any() == true)
+        {
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var menuItem in menu.MenuItems)
+                {
+                <tr class="menuItem-row" data-item-id="@menuItem.menuItem.itemID" style="cursor: pointer;">
+                    <td>
+                        @if (menuItem.menuItem.ImageData != null)
+                        {
+                        <img class="menuItemImage"
+                             src="@string.Format("data:image/jpg;base64,{0}",
+                             Convert.ToBase64String(menuItem.menuItem.ImageData))"
+                             alt="@menuItem.menuItem.ImageDescription"/>
+                        }
+                    </td>
+                    <td>@menuItem.menuItem.name</td>
+                    <td>@menuItem.menuItem.description</td>
+                    <td>@menuItem.menuItem.price.ToString("C")</td>
+                </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        }
+    </div>
+</div>
+}
+
+@if (!Model.SearchResults.Any())
+{
+<div class="alert alert-info">
+    No menus found matching your search criteria.
+</div>
+}
+
+@section Scripts {
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuRows = document.querySelectorAll('.menuItem-row');
+
+        menuRows.forEach(row => {
+            row.addEventListener('click', function(e) {
+                // Don't navigate if clicking on action buttons
+                if (e.target.closest('a')) {
+                    return;
+                }
+
+                const itemId = this.getAttribute('data-item-id');
+                window.location.href = './Item/ItemDetails?id=' + itemId;
+            });
+        });
+    });
+</script>
+}

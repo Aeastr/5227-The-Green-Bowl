@@ -46,11 +46,12 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+    var dbContext = services.GetRequiredService<TheGreenBowlContext>(); // Get the database context
 
     // Define the role and admin user details
     string adminRole = "Admin";
     string adminEmail = "admin@example.com";
-    string adminPassword = "SecurePassword123!"; // Please replace with a stronger password
+    string adminPassword = "SecurePassword123!";
 
     // Check if the Admin role exists, and create it if it doesn't.
     if (!await roleManager.RoleExistsAsync(adminRole))
@@ -60,6 +61,8 @@ using (var scope = app.Services.CreateScope())
 
     // Check if an admin user already exists.
     var adminUser = await userManager.FindByEmailAsync(adminEmail);
+    bool isNewUser = false;
+    
     if (adminUser == null)
     {
         // Create the admin user
@@ -75,6 +78,7 @@ using (var scope = app.Services.CreateScope())
         {
             // Add to admin role
             await userManager.AddToRoleAsync(adminUser, adminRole);
+            isNewUser = true; // Mark as a new user so we know to create a basket
         }
         else
         {
@@ -93,6 +97,30 @@ using (var scope = app.Services.CreateScope())
         {
             await userManager.AddToRoleAsync(adminUser, adminRole);
         }
+    }
+    
+    // Check if the admin user has a basket, and create one if they don't
+    // We need to get the user ID first
+    string adminUserId = adminUser.Id;
+    
+    // Check if this user already has a basket
+    var existingBasket = await dbContext.tblBaskets
+        .FirstOrDefaultAsync(b => b.userID == adminUserId);
+    
+    if (existingBasket == null)
+    {
+        // Create a new basket for the admin user
+        var adminBasket = new tblBasket
+        {
+            userID = adminUserId,
+            createdAt = DateTime.Now
+        };
+        
+        // Add the basket to the database
+        dbContext.tblBaskets.Add(adminBasket);
+        await dbContext.SaveChangesAsync();
+        
+        Console.WriteLine($"Created a new basket for admin user {adminUserId}");
     }
 }
 

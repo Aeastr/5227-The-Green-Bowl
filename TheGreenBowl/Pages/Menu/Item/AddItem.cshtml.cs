@@ -139,7 +139,7 @@ namespace TheGreenBowl.Pages.Menu
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToPage("./Details", new { id = MenuId });
+            return RedirectToPage("../Details", new { id = MenuId });
         }
 
         private async Task LoadAvailableItems(tblMenu menu)

@@ -23,14 +23,17 @@ bool isAdmin = User.IsInRole("Admin");
 <div class="row mb-4">
     <div class="col-md-6">
         <form asp-page="./SearchResults" method="get" class="d-flex">
-            <input type="text" name="q" class="form-control me-2"
-                   placeholder="Search menus and items..."/>
-            <button type="submit" class="btn btn-outline-primary">
-                <i class="fa-solid fa-search"></i> Search
-            </button>
+            <div class="input-group">
+                <input type="text" name="q" class="form-control"
+                       placeholder="Search menus and items..." required/>
+                <button type="submit" class="btn btn-outline-primary">
+                    <i class="fa-solid fa-search"></i> Search
+                </button>
+            </div>
         </form>
     </div>
 </div>
+
 
 <table class="table">
     <thead>

@@ -1,14 +1,23 @@
-using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TheGreenBowl.Models
 {
     public class tblMenu_MenuItem
     {
-        public int menuID { get; set; } // foreign key to tblMenu
-        public int itemID { get; set; } // foreign key to tblMenuItem
+        [Key]
+        [Column(Order = 1)]
+        public int menuID { get; set; }
+        
+        [Key]
+        [Column(Order = 2)]
+        public int itemID { get; set; }
 
-        // navigation properties
-        public tblMenu menu { get; set; } // reference to the menu
-        public tblMenuItem menuItem { get; set; } // reference to the menu item
+        // Navigation properties
+        [ForeignKey("menuID")]
+        public virtual tblMenu menu { get; set; }
+        
+        [ForeignKey("itemID")]
+        public virtual tblMenuItem menuItem { get; set; }
     }
 }
