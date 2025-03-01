@@ -107,52 +107,60 @@ namespace TheGreenBowl.Data
                 .HasForeignKey(mm => mm.itemID);
             
             // Configure tblBasket - our new basket table
-            modelBuilder.Entity<tblBasket>()
-                .HasKey(b => b.basketID); // Define the primary key
-
-            modelBuilder.Entity<tblBasket>()
-                .Property(b => b.createdAt)
-                .HasDefaultValueSql("GETDATE()"); // Automatically set creation timestamp
+            // Configure tblBasket - our new basket table
+            modelBuilder.Entity<tblBasket>(entity =>
+            {
+                entity.HasKey(b => b.basketID); // Define the primary key
+    
+                // Explicitly configure basketID as an identity column
+                entity.Property(b => b.basketID)
+                    .UseIdentityColumn() // This makes it an auto-incrementing identity column
+                    .IsRequired();
+    
+                entity.Property(b => b.createdAt)
+                    .HasDefaultValueSql("GETDATE()"); // Automatically set creation timestamp
+    
+                // Set up the relationship between baskets and users
+                entity.HasOne(b => b.user)
+                    .WithMany() // No navigation property from user to baskets
+                    .HasForeignKey(b => b.userID)
+                    .OnDelete(DeleteBehavior.Cascade); // If user is deleted, delete their basket too
+    
+                // Ensure a user can only have one basket at a time
+                entity.HasIndex(b => b.userID)
+                    .IsUnique();
+            });
 
             // Set up the relationship between baskets and users
             // Each basket belongs to one user, and we're not defining a navigation property
             // from user to basket since a user will only have one active basket
-            modelBuilder.Entity<tblBasket>()
-                .HasOne(b => b.user)
-                .WithMany() // No navigation property from user to baskets
-                .HasForeignKey(b => b.userID)
-                .OnDelete(DeleteBehavior.Cascade); // If user is deleted, delete their basket too
-
-            // Ensure a user can only have one basket at a time
-            modelBuilder.Entity<tblBasket>()
-                .HasIndex(b => b.userID)
-                .IsUnique();
-
-            // Configure tblBasketItem - our basket items join table
-            modelBuilder.Entity<tblBasketItem>()
-                .HasKey(bi => bi.basketItemID); // Define primary key
-
-            modelBuilder.Entity<tblBasketItem>()
-                .Property(bi => bi.quantity)
-                .IsRequired()
-                .HasDefaultValue(1); // Default quantity is 1 if not specified
-
-            // Set up the relationship between basket items and baskets
-            // Each basket item belongs to one basket, and a basket can have many items
-            modelBuilder.Entity<tblBasketItem>()
-                .HasOne(bi => bi.basket)
-                .WithMany(b => b.basketItems) // Links to the basketItems collection in tblBasket
-                .HasForeignKey(bi => bi.basketID)
-                .OnDelete(DeleteBehavior.Cascade); // If basket is deleted, delete all its items
-
-            // Set up the relationship between basket items and menu items
-            // Each basket item references one menu item, but we don't need a navigation
-            // property from menu items to basket items
-            modelBuilder.Entity<tblBasketItem>()
-                .HasOne(bi => bi.menuItem)
-                .WithMany() // No navigation property from menuItem to basketItems
-                .HasForeignKey(bi => bi.itemID)
-                .OnDelete(DeleteBehavior.Cascade); // If menu item is deleted, remove it from baskets
+            
+// Configure tblBasketItem - our basket items join table
+            modelBuilder.Entity<tblBasketItem>(entity =>
+            {
+                entity.HasKey(bi => bi.basketItemID); // Define primary key
+    
+                // Explicitly configure basketItemID as an identity column
+                entity.Property(bi => bi.basketItemID)
+                    .UseIdentityColumn() // This makes it an auto-incrementing identity column
+                    .IsRequired();
+    
+                entity.Property(bi => bi.quantity)
+                    .IsRequired()
+                    .HasDefaultValue(1); // Default quantity is 1 if not specified
+    
+                // Set up the relationship between basket items and baskets
+                entity.HasOne(bi => bi.basket)
+                    .WithMany(b => b.basketItems) // Links to the basketItems collection in tblBasket
+                    .HasForeignKey(bi => bi.basketID)
+                    .OnDelete(DeleteBehavior.Cascade); // If basket is deleted, delete all its items
+    
+                // Set up the relationship between basket items and menu items
+                entity.HasOne(bi => bi.menuItem)
+                    .WithMany() // No navigation property from menuItem to basketItems
+                    .HasForeignKey(bi => bi.itemID)
+                    .OnDelete(DeleteBehavior.Cascade); // If menu item is deleted, remove it from baskets
+            });
         }
     }
 }

@@ -115,12 +115,36 @@ using (var scope = app.Services.CreateScope())
             userID = adminUserId,
             createdAt = DateTime.Now
         };
-        
-        // Add the basket to the database
-        dbContext.tblBaskets.Add(adminBasket);
-        await dbContext.SaveChangesAsync();
-        
-        Console.WriteLine($"Created a new basket for admin user {adminUserId}");
+    
+        // Use a separate transaction context to ensure this operation completes
+        using (var transaction = await dbContext.Database.BeginTransactionAsync())
+        {
+            try
+            {
+                // Add the basket to the database
+                dbContext.tblBaskets.Add(adminBasket);
+                var saveResult = await dbContext.SaveChangesAsync();
+            
+                // Check if any rows were affected
+                Console.WriteLine($"SaveChanges affected {saveResult} rows");
+            
+                // Explicitly commit the transaction
+                await transaction.CommitAsync();
+            
+                Console.WriteLine($"Created a new basket for admin user {adminUserId} with ID: {adminBasket.basketID}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving basket: {ex.Message}");
+                // No need to roll back as it will happen automatically when the using block exits
+                throw;
+            }
+        }
+    }
+
+    else
+    {
+        Console.WriteLine($"User already has basket");
     }
 }
 
