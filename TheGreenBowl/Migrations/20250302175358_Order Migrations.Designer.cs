@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TheGreenBowl.Data;
 
@@ -11,9 +12,10 @@ using TheGreenBowl.Data;
 namespace TheGreenBowl.Migrations
 {
     [DbContext(typeof(TheGreenBowlContext))]
-    partial class TheGreenBowlContextModelSnapshot : ModelSnapshot
+    [Migration("20250302175358_Order Migrations")]
+    partial class OrderMigrations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -25,6 +25,9 @@ namespace TheGreenBowl.Data
         // These will let us work with user baskets and their items
         public DbSet<tblBasket> tblBaskets { get; set; }
         public DbSet<tblBasketItem> tblBasketItems { get; set; }
+        
+        public DbSet<tblOrder> Orders { get; set; }
+        public DbSet<tblOrderItem> OrderItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -164,6 +167,22 @@ namespace TheGreenBowl.Data
                     .HasForeignKey(bi => bi.itemID)
                     .OnDelete(DeleteBehavior.Cascade); // If menu item is deleted, remove it from baskets
             });
+            
+            // configure order tables 
+            modelBuilder.Entity<tblOrderItem>()
+                .HasOne(oi => oi.order)
+                .WithMany(o => o.orderItems)
+                .HasForeignKey(oi => oi.orderID);
+
+            modelBuilder.Entity<tblOrderItem>()
+                .HasOne(oi => oi.menuItem)
+                .WithMany()
+                .HasForeignKey(oi => oi.itemID);
+
+            modelBuilder.Entity<tblOrder>()
+                .HasOne(o => o.user)
+                .WithMany()
+                .HasForeignKey(o => o.userID);
         }
     }
 }
