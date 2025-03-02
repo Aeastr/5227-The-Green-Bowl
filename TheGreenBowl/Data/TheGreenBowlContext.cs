@@ -19,6 +19,8 @@ namespace TheGreenBowl.Data
         public DbSet<tblMenuCategory> tblMenuCategory { get; set; } // Fixed from tblMenu to tblMenuCategory
         public DbSet<tblMenu_MenuItem> tblMenu_MenuItems { get; set; }
         
+        public DbSet<tblOpeningTimes> tblOpeningTimes { get; set; }
+        
         // New DbSets for our basket system
         // These will let us work with user baskets and their items
         public DbSet<tblBasket> tblBaskets { get; set; }
@@ -36,8 +38,9 @@ namespace TheGreenBowl.Data
             modelBuilder.Entity<tblCategory>().ToTable("Category");
             modelBuilder.Entity<tblMenuCategory>().ToTable("MenuCategory");
             modelBuilder.Entity<tblMenu_MenuItem>().ToTable("Menu_MenuItem");
-            modelBuilder.Entity<tblBasket>().ToTable("Basket"); // New basket table
-            modelBuilder.Entity<tblBasketItem>().ToTable("BasketItem"); // New basket items table
+            modelBuilder.Entity<tblBasket>().ToTable("Basket"); 
+            modelBuilder.Entity<tblBasketItem>().ToTable("BasketItem"); 
+            modelBuilder.Entity<tblOpeningTimes>().ToTable("OpeningTimes"); 
             
             // Configure tblMenu
             modelBuilder.Entity<tblMenu>()

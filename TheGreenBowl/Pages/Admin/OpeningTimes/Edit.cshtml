@@ -1,0 +1,59 @@
+@page "{id?}"
+@model TheGreenBowl.Pages.Admin.OpeningTimes.EditModel
+@{
+    string title = Model.Item == null || Model.Item.OpeningTimeId == 0 
+        ? "Add Opening Time" 
+        : "Edit Opening Time";
+    ViewData["Title"] = title;
+}
+
+
+<!DOCTYPE html>
+
+<html>
+<body>
+<h1>@title</h1>
+<form method="post">
+    <div class="form-group mb-3">
+        <label asp-for="Item.DayOfWeek" class="control-label"></label>
+        <select asp-for="Item.DayOfWeek" class="form-control">
+            @foreach (var day in Enum.GetValues(typeof(DayOfWeek)))
+            {
+                <option value="@day">@day</option>
+            }
+        </select>
+        <span asp-validation-for="Item.DayOfWeek" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3">
+        <label asp-for="Item.OpenTime" class="control-label"></label>
+        <input asp-for="Item.OpenTime" class="form-control" type="time" />
+        <span asp-validation-for="Item.OpenTime" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3">
+        <label asp-for="Item.CloseTime" class="control-label"></label>
+        <input asp-for="Item.CloseTime" class="form-control" type="time" />
+        <span asp-validation-for="Item.CloseTime" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3">
+        <div class="form-check">
+            <input asp-for="Item.IsEnabled" class="form-check-input" />
+            <label asp-for="Item.IsEnabled" class="form-check-label"></label>
+        </div>
+    </div>
+    <div class="form-group mb-3">
+        <label asp-for="Item.EnabledUntil" class="control-label"></label>
+        <input asp-for="Item.EnabledUntil" class="form-control" type="date" />
+        <span asp-validation-for="Item.EnabledUntil" class="text-danger"></span>
+    </div>
+
+    <input type="hidden" asp-for="Item.OpeningTimeId" />
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-page="OpeningTimes" class="btn btn-secondary">Cancel</a>
+</form>
+</body>
+</html>
+
+@* contains references and initialization code for jQuery Validation and Unobtrusive Validation *@
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

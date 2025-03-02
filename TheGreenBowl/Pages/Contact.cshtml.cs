@@ -1,29 +1,49 @@
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
-using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
+using TheGreenBowl.Data;
+using TheGreenBowl.Models;
 using TheGreenBowl.Services;
+using Microsoft.Extensions.Logging;
 
 namespace TheGreenBowl.Pages
 {
     public class ContactModel : PageModel
     {
-        private readonly ILogger<ContactModel> _logger;
+        private readonly TheGreenBowlContext _context;
         private readonly IEmailService _emailService;
+        private readonly ILogger<ContactModel> _logger;
 
-        public ContactModel(ILogger<ContactModel> logger, IEmailService emailService)
+        public ContactModel(TheGreenBowlContext context,
+                            IEmailService emailService,
+                            ILogger<ContactModel> logger)
         {
-            _logger = logger;
+            _context = context;
             _emailService = emailService;
+            _logger = logger;
         }
 
+        // This property holds the contact form data.
         [BindProperty]
         public ContactFormData FormData { get; set; }
 
-        public void OnGet()
+        // New property: This list will hold the opening times retrieved from the database.
+        public List<tblOpeningTimes> OpeningTimes { get; set; } = new List<tblOpeningTimes>();
+
+        public async Task<IActionResult> OnGetAsync()
         {
+            // Load the active opening times. Adjust the filter as needed.
+            OpeningTimes = await _context.tblOpeningTimes
+                .Where(ot => ot.IsEnabled && (!ot.EnabledUntil.HasValue || ot.EnabledUntil > DateTime.Now))
+                .OrderBy(ot => ot.DayOfWeek)
+                .ToListAsync();
+
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -35,7 +55,7 @@ namespace TheGreenBowl.Pages
 
             try
             {
-                // Use the email service to "send" the email
+                // Use the email service to "send" the email.
                 await _emailService.SendEmailAsync(
                     to: "restaurant@thegreenbowl.com",
                     from: FormData.Email,
@@ -43,7 +63,6 @@ namespace TheGreenBowl.Pages
                     body: $"Name: {FormData.Name}\nEmail: {FormData.Email}\n\n{FormData.Message}"
                 );
 
-                // Set success message
                 TempData["SuccessMessage"] = "Thank you for your message! We'll get back to you soon.";
             }
             catch (Exception ex)
@@ -53,7 +72,7 @@ namespace TheGreenBowl.Pages
                 return Page();
             }
 
-            // Redirect to the same page to avoid form resubmission
+            // Redirect to avoid resubmission
             return RedirectToPage();
         }
     }
