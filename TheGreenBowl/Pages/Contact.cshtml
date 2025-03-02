@@ -1,10 +1,104 @@
 @page
-@model ContactModel
+@model TheGreenBowl.Pages.ContactModel
 @{
-ViewData["Title"] = "Contact";
+    ViewData["Title"] = "Contact Us";
 }
 
-<div class="container">
-    <h1>Contact Us</h1>
-    <p>Contact form coming soon.</p>
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-6">
+            <h1>Contact Us</h1>
+            <p class="lead">We'd love to hear from you! Fill out the form below to get in touch with us.</p>
+            
+            <div class="mt-4">
+                <h4>The Green Bowl Restaurant</h4>
+                <address>
+                    Parkgate Rd<br />
+                    Chester, CH1 4BJ<br />
+                    <i class="fa-solid fa-phone me-2"></i> 0121 456 7890<br />
+                    <i class="fa-solid fa-envelope me-2"></i> <a href="mailto:info@thegreenbowl.com">info@thegreenbowl.com</a>
+                </address>
+            </div>
+
+            <div class="mt-4">
+                <h4>Opening Hours</h4>
+                <table class="table table-borderless">
+                    <tbody>
+                        <tr>
+                            <td>Monday - Friday</td>
+                            <td>11:00 AM - 10:00 PM</td>
+                        </tr>
+                        <tr>
+                            <td>Saturday</td>
+                            <td>10:00 AM - 11:00 PM</td>
+                        </tr>
+                        <tr>
+                            <td>Sunday</td>
+                            <td>10:00 AM - 9:00 PM</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title mb-4">Send us a message</h3>
+                    
+                    <form method="post">
+                        <div class="mb-3">
+                            <label asp-for="FormData.Name" class="form-label">Your Name</label>
+                            <input asp-for="FormData.Name" class="form-control" />
+                            <span asp-validation-for="FormData.Name" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="FormData.Email" class="form-label">Email Address</label>
+                            <input asp-for="FormData.Email" class="form-control" />
+                            <span asp-validation-for="FormData.Email" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="FormData.Subject" class="form-label">Subject</label>
+                            <input asp-for="FormData.Subject" class="form-control" />
+                            <span asp-valicodation-for="FormData.Subject" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="FormData.Message" class="form-label">Message</label>
+                            <textarea asp-for="FormData.Message" class="form-control" rows="5"></textarea>
+                            <span asp-validation-for="FormData.Message" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Send Message</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3>Find Us</h3>
+            <div class="ratio ratio-16x9">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d38239.674816168175!2d-2.9760369513671785!3d53.2002807!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487add4c5264e8f9%3A0xb15819ede08133ab!2sUniversity%20of%20Chester!5e0!3m2!1sen!2suk!4v1740925729697!5m2!1sen!2suk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </div>
+    </div>
+
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

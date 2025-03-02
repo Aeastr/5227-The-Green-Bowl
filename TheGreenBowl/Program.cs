@@ -2,12 +2,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TheGreenBowl.Data;
 using TheGreenBowl.Models;
+using TheGreenBowl.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
+
+// Register email service
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Existing database context registration
 builder.Services.AddDbContext<TheGreenBowlContext>(options =>
