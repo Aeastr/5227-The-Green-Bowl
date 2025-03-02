@@ -13,22 +13,28 @@ namespace TheGreenBowl.Pages.Menu
 {
     public class DetailsModel : PageModel
     {
-        private readonly TheGreenBowlContext _context;
+        private readonly TheGreenBowl.Data.TheGreenBowlContext _context;
 
-        public DetailsModel(TheGreenBowlContext context)
+        public DetailsModel(TheGreenBowl.Data.TheGreenBowlContext context)
         {
             _context = context;
         }
         
-        // Flag to indicate if the user is logged in.
         public bool IsUserLoggedIn { get; set; }
-        // Return URL for redirection after actions.
         public string ReturnUrl { get; set; }
-        // The detailed menu being displayed.
-        public tblMenu tblMenu { get; set; } = default!;
-        // A dictionary of item IDs and their quantities in the user's basket.
-        public Dictionary<int, int> BasketQuantities { get; set; } = new Dictionary<int, int>();
 
+        public tblMenu tblMenu { get; set; } = default!;
+        
+        public List<BasketItemInfo> UserBasketItems { get; set; } = new List<BasketItemInfo>();
+
+        public class BasketItemInfo
+        {
+            public int BasketItemID { get; set; }
+            public int ItemID { get; set; }
+            public int Quantity { get; set; }
+        }
+
+        // Update the OnGetAsync method to load basket items
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null)
@@ -36,27 +42,29 @@ namespace TheGreenBowl.Pages.Menu
                 return NotFound();
             }
 
-            // Load the menu with its related items and categories.
+            // Load the menu with its related menu items and categories
             var tblmenu = await _context.tblMenus
-                .Include(m => m.MenuItems)        // Junction table for menu and menu items.
-                .ThenInclude(mm => mm.menuItem)     // The actual menu item data.
-                .Include(m => m.Categories)         // Junction table for menu and categories.
-                .ThenInclude(mc => mc.Category)     // The actual category data.
+                .Include(m => m.MenuItems) // Include the relationship to MenuItems
+                .ThenInclude(mm => mm.menuItem) // Include the actual menu item data
+                .Include(m => m.Categories) // Include the relationship to Categories
+                .ThenInclude(mc => mc.Category) // Include the actual category data
                 .FirstOrDefaultAsync(m => m.menuID == id);
 
             if (tblmenu == null)
+            {
                 return NotFound();
+            }
             else
+            {
                 tblMenu = tblmenu;
-            
-            // Determine if the user is logged in.
-            bool isLoggedIn = User.Identity.IsAuthenticated;
-            string returnUrl = Url.Page("/Menu/Details", new { id = tblmenu.menuID });
-            IsUserLoggedIn = isLoggedIn;
-            ReturnUrl = returnUrl;
+            }
+    
+            // Check if user is authenticated
+            IsUserLoggedIn = User.Identity.IsAuthenticated;
+            ReturnUrl = Url.Page("/Menu/Details", new { id = tblmenu.menuID });
 
-            // If the user is logged in, load their basket (if it exists) and build the dictionary.
-            if (isLoggedIn)
+            // If user is logged in, load their basket items
+            if (IsUserLoggedIn)
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var basket = await _context.tblBaskets
@@ -65,128 +73,158 @@ namespace TheGreenBowl.Pages.Menu
 
                 if (basket != null)
                 {
-                    BasketQuantities = basket.basketItems
-                        .ToDictionary(bi => bi.itemID, bi => bi.quantity);
+                    UserBasketItems = basket.basketItems
+                        .Select(bi => new BasketItemInfo
+                        {
+                            BasketItemID = bi.basketItemID,
+                            ItemID = bi.itemID,
+                            Quantity = bi.quantity
+                        })
+                        .ToList();
                 }
             }
 
             return Page();
         }
 
-        // Handler for the original "Add to Basket" when item not already in basket.
-        public async Task<IActionResult> OnPostAddToBasketAsync(int itemId, string returnUrl = null)
-        {
-            // Redirect to login if not authenticated.
-            if (!User.Identity.IsAuthenticated)
-            {
-                return RedirectToPage("/Account/Login",
-                            new { area = "Identity", returnUrl = returnUrl ?? Url.Page("/Menu/Details", new { id = 0 }) });
-            }
-
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            // Try to load the user's basket.
-            var basket = await _context.tblBaskets
-                .Include(b => b.basketItems)
-                .FirstOrDefaultAsync(b => b.userID == userId);
-
-            if (basket == null)
-            {
-                // If no basket exists, create one.
-                basket = new tblBasket
-                {
-                    userID = userId,
-                    createdAt = DateTime.Now,
-                    basketItems = new List<tblBasketItem>()
-                };
-                _context.tblBaskets.Add(basket);
-                await _context.SaveChangesAsync();
-            }
-
-            // Add a new basket item.
-            var basketItem = new tblBasketItem
-            {
-                basketID = basket.basketID,
-                itemID = itemId,
-                quantity = 1
-            };
-            basket.basketItems.Add(basketItem);
-            await _context.SaveChangesAsync();
-
-            TempData["SuccessMessage"] = "Item added to basket!";
-            return Redirect(returnUrl ?? Url.Page("/Menu/Details"));
-        }
-
-        // Handler to increment an item’s quantity in the basket.
-        public async Task<IActionResult> OnPostIncrementAsync(int itemId, string returnUrl = null)
+        // Handler for updating quantities of items asynchronously
+        public async Task<IActionResult> OnPostUpdateQuantityAsync(int itemId, int quantity, string operation, string returnUrl)
         {
             if (!User.Identity.IsAuthenticated)
             {
-                return RedirectToPage("/Account/Login",
-                    new { area = "Identity", returnUrl = returnUrl });
+                return new JsonResult(new { success = false, message = "Not authenticated" });
             }
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var basket = await _context.tblBaskets
                 .Include(b => b.basketItems)
                 .FirstOrDefaultAsync(b => b.userID == userId);
+
+            // check if user has a basket (they should as each user gets one on account creation
             if (basket == null)
             {
-                // No basket? Create one just as in OnPostAddToBasket.
-                basket = new tblBasket
-                {
-                    userID = userId,
-                    createdAt = DateTime.Now,
-                    basketItems = new List<tblBasketItem>()
-                };
-                _context.tblBaskets.Add(basket);
-                await _context.SaveChangesAsync();
-            }
-            var existingItem = basket.basketItems.FirstOrDefault(bi => bi.itemID == itemId);
-            if (existingItem != null)
-            {
-                existingItem.quantity++;
+                return new JsonResult(new { success = false, message = "Basket not found" });
             }
             else
             {
-                // If item not already present, simply add it.
-                basket.basketItems.Add(new tblBasketItem
+                // logic for when they do not have a basket (maybe we create it?)
+            }
+
+            var basketItem = basket.basketItems.FirstOrDefault(bi => bi.itemID == itemId);
+            if (basketItem == null)
+            {
+                return new JsonResult(new { success = false, message = "Item not in basket" });
+            }
+
+            // Process the update based on operation
+            switch (operation.ToLower())
+            {
+                case "increment":
+                    basketItem.quantity += 1;
+                    break;
+                case "decrement":
+                    basketItem.quantity -= 1;
+                    break;
+                case "update":
+                    basketItem.quantity = quantity;
+                    break;
+                default:
+                    break;
+            }
+
+            // Define an upper limit
+            const int maxAllowedQuantity = 1000;
+            if (basketItem.quantity > maxAllowedQuantity)
+            {
+                basketItem.quantity = maxAllowedQuantity;
+            }
+
+            bool removed = false;
+            if (basketItem.quantity <= 0)
+            {
+                _context.tblBasketItems.Remove(basketItem);
+                removed = true;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return new JsonResult(new { 
+                success = true, 
+                newQuantity = basketItem.quantity, 
+                removed = removed
+            });
+        }
+        
+        [IgnoreAntiforgeryToken] // Since we're sending JSON, we need to ignore the antiforgery token
+        // Handler for inital add to cart action, before showing the incremental UI using update handler
+        public async Task<IActionResult> OnPostAddToBasketAjaxAsync([FromBody] AddToBasketRequest request)
+        {
+            // Checking if the user is logged in
+            if (!User.Identity.IsAuthenticated)
+            {
+                return new JsonResult(new { success = false, message = "Not logged in" });
+            }
+            else
+            {
+                // we could direct them to the login/register page if not..
+            }
+
+            int itemId = request.ItemId;
+    
+            // Get the current user's ID
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    
+            // Find the user's basket (or create one if it doesn't exist)
+            var basket = await _context.tblBaskets
+                .Include(b => b.basketItems)
+                .FirstOrDefaultAsync(b => b.userID == userId);
+
+            if (basket == null)
+            {
+                // Create a new basket for this user
+                basket = new tblBasket
+                {
+                    userID = userId,
+                    createdAt = DateTime.Now,
+                    basketItems = new List<tblBasketItem>()
+                };
+                _context.tblBaskets.Add(basket);
+                await _context.SaveChangesAsync();
+            }
+
+            // Check if the item is already in the basket
+            var existingItem = basket.basketItems
+                .FirstOrDefault(bi => bi.itemID == itemId);
+
+            if (existingItem != null)
+            {
+                // In case our UI get's out of sync, add a case for when the incremental UI should be showing, but is not
+                // Item already exists, increment quantity
+                existingItem.quantity += 1;
+            }
+            else
+            {
+                // Add new item to basket
+                var basketItem = new tblBasketItem
                 {
                     basketID = basket.basketID,
                     itemID = itemId,
                     quantity = 1
-                });
+                };
+                basket.basketItems.Add(basketItem);
             }
+
+            // Save changes
             await _context.SaveChangesAsync();
-            return Redirect(returnUrl ?? Url.Page("/Menu/Details"));
+
+            return new JsonResult(new { success = true });
         }
 
-        // Handler to decrement an item's quantity (and remove if quantity reaches zero).
-        public async Task<IActionResult> OnPostDecrementAsync(int itemId, string returnUrl = null)
+        // Class to deserialize the JSON request
+        public class AddToBasketRequest
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return RedirectToPage("/Account/Login",
-                    new { area = "Identity", returnUrl = returnUrl });
-            }
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var basket = await _context.tblBaskets
-                .Include(b => b.basketItems)
-                .FirstOrDefaultAsync(b => b.userID == userId);
-            if (basket == null)
-            {
-                return Redirect(returnUrl ?? Url.Page("/Menu/Details"));
-            }
-            var existingItem = basket.basketItems.FirstOrDefault(bi => bi.itemID == itemId);
-            if (existingItem != null)
-            {
-                existingItem.quantity--;
-                if (existingItem.quantity <= 0)
-                {
-                    _context.tblBasketItems.Remove(existingItem);
-                }
-                await _context.SaveChangesAsync();
-            }
-            return Redirect(returnUrl ?? Url.Page("/Menu/Details"));
+            public int ItemId { get; set; }
+            public string ReturnUrl { get; set; }
         }
     }
 }
