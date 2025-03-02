@@ -153,6 +153,7 @@ namespace TheGreenBowl.Pages.Checkout
         [Required]
         [Display(Name = "Contact Email")]
         [EmailAddress(ErrorMessage = "Please enter a valid email address.")]
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Please enter a valid email address.")]
         public string ContactEmail { get; set; }
 
         [Display(Name = "Delivery Address")]
