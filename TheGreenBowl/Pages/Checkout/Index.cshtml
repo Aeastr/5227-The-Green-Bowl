@@ -1,0 +1,144 @@
+@page
+@model TheGreenBowl.Pages.Checkout.IndexModel
+@{
+ViewData["Title"] = "Checkout";
+}
+
+<div class="container">
+    <h1>Checkout</h1>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Subtotal</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var item in Model.BasketItems)
+                        {
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    @if (item.ImageData != null)
+                                    {
+                                    <img src="data:image/jpg;base64,@Convert.ToBase64String(item.ImageData)"
+                                         alt="@item.ImageDescription"
+                                         class="img-thumbnail me-2"
+                                         style="width: 50px; height: 50px; object-fit: cover;" />
+                                    }
+                                    <div>
+                                        <h6 class="mb-0">@item.MenuItemName</h6>
+                                        <small class="text-muted">@item.MenuItemDescription</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>@item.MenuItemPrice.ToString("C")</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.Subtotal.ToString("C")</td>
+                        </tr>
+                        }
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                            <td><strong>@Model.TotalPrice.ToString("C")</strong></td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Delivery Details</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <div class="mb-3">
+                            <label asp-for="CheckoutInfo.OrderType" class="form-label"></label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" asp-for="CheckoutInfo.OrderType" id="collection" value="Collection" checked>
+                                <label class="form-check-label" for="collection">
+                                    Collection
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" asp-for="CheckoutInfo.OrderType" id="delivery" value="Delivery">
+                                <label class="form-check-label" for="delivery">
+                                    Delivery
+                                </label>
+                            </div>
+                            <span asp-validation-for="CheckoutInfo.OrderType" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CheckoutInfo.ContactPhone" class="form-label"></label>
+                            <input asp-for="CheckoutInfo.ContactPhone" class="form-control" />
+                            <span asp-validation-for="CheckoutInfo.ContactPhone" class="text-danger"></span>
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label asp-for="CheckoutInfo.ContactEmail" class="form-label"></label>
+                            <input asp-for="CheckoutInfo.ContactEmail" class="form-control" />
+                            <span asp-validation-for="CheckoutInfo.ContactEmail" class="text-danger"></span>
+                        </div>
+
+                        <div id="deliveryFields" style="display: none;">
+                            <div class="mb-3">
+                                <label asp-for="CheckoutInfo.DeliveryAddress" class="form-label"></label>
+                                <input asp-for="CheckoutInfo.DeliveryAddress" class="form-control" />
+                                <span asp-validation-for="CheckoutInfo.DeliveryAddress" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="CheckoutInfo.Postcode" class="form-label"></label>
+                                <input asp-for="CheckoutInfo.Postcode" class="form-control" />
+                                <span asp-validation-for="CheckoutInfo.Postcode" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Place Order</button>
+                            <a asp-page="/Basket/Index" class="btn btn-outline-secondary">Back to Basket</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<partial name="_ValidationScriptsPartial" />
+<script>
+    $(document).ready(function() {
+        // Show/hide delivery fields based on order type
+        $('input[name="CheckoutInfo.OrderType"]').change(function () {
+            if ($(this).val() === 'Delivery') {
+                $('#deliveryFields').show();
+            } else {
+                $('#deliveryFields').hide();
+            }
+        });
+
+        // Initialize on page load
+        if ($('input[name="CheckoutInfo.OrderType"]:checked').val() === 'Delivery') {
+            $('#deliveryFields').show();
+        }
+
+    });
+</script>
+}
