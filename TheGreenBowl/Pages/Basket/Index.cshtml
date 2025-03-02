@@ -1,0 +1,76 @@
+@page
+@model TheGreenBowl.Pages.Basket.IndexModel
+@{
+    ViewData["Title"] = "Your Basket";
+}
+
+<h1>Your Basket</h1>
+
+@if (!Model.BasketItems.Any())
+{
+    <p>Your basket is empty.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.BasketItems)
+        {
+            <tr data-basket-item-id="@item.BasketItemID">
+                @if (item.ImageData != null)
+                {
+                    <td>
+                        <img class="menuItemImage" src="data:image/jpg;base64,@Convert.ToBase64String(item.ImageData)" alt="@item.ImageDescription" />
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        No Image
+                    </td>
+                }
+                <td>@item.MenuItemName</td>
+                <td>@item.MenuItemDescription</td>
+                <td>@item.MenuItemPrice.ToString("C")</td>
+                <td>
+                    <form method="post" class="updateQuantityForm" asp-page="/Basket/Index" asp-page-handler="UpdateQuantity">
+                        <input type="hidden" name="basketItemId" value="@item.BasketItemID" />
+                        <button type="button" class="btn btn-sm btn-outline-danger decrement-btn">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+                        <input type="number" name="quantity" value="@item.Quantity" min="0" max="1000"  class="form-control mx-2 quantity-input" style="width: fit-content; min-width: 50px; padding: 0.2em; display:inline-block;" />
+                        <button type="button" class="btn btn-sm btn-outline-success increment-btn">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </form>
+                </td>
+                <td class="subtotal-cell">@item.Subtotal.ToString("C")</td>
+            </tr>
+        }
+        </tbody>
+
+        <tfoot>
+        <tr>
+            <td colspan="5" class="text-end"><strong>Total:</strong></td>
+            <td colspan="2" id="totalCell"><strong>@Model.TotalPrice.ToString("C")</strong></td>
+        </tr>
+        </tfoot>
+    </table>
+
+
+    <a asp-page="/Checkout/Index" class="btn btn-success">Proceed to Checkout</a>
+}
+
+@section Scripts {
+    <script src="/js/basket.js"></script>
+}
