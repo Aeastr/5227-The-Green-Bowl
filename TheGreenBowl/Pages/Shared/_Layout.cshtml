@@ -34,7 +34,7 @@
                         <a class="nav-link" asp-page="/Index">home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-page="/Menu/Index">menu</a>
+                        <a class="nav-link" asp-page="/Menu/Index">menus</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" asp-page="/Contact">contact</a>
@@ -50,6 +50,14 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <partial name="_LoginPartial" />
+
+
+                            @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                            {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-page="/Admin/Index">admin dashboard</a>
+                            </li>
+                            }
                         </ul>
                     </li>
 

@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace TheGreenBowl.Pages;
+namespace TheGreenBowl.Pages.Admin;
 
-public class Admin : PageModel
+public class Index : PageModel
 {
     public void OnGet()
     {
