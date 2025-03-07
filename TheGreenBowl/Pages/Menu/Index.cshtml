@@ -6,17 +6,20 @@ ViewData["Title"] = "Menus";
 bool isAdmin = User.IsInRole("Admin");
 }
 
+<!-- Add the antiforgery form -->
+<form id="antiforgeryform" style="display:none;">
+    @Html.AntiForgeryToken()
+</form>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>Menus</h1>
-    
     @if (isAdmin)
     {
-        <a asp-page="./Create" class="btn btn-success">
-            <i class="fa-solid fa-plus"></i> Add Menu
-        </a>
+    <a asp-page="./Create" class="btn btn-success">
+        <i class="fa-solid fa-plus"></i> Add Menu
+    </a>
     }
 </div>
 
@@ -34,67 +37,96 @@ bool isAdmin = User.IsInRole("Admin");
     </div>
 </div>
 
+@foreach (var menu in Model.Menus)
+{
+<div class="menu-section">
+    <div class="menu-header">
+        <div>
+            <h2>@menu.name</h2>
+            <p>@menu.description</p>
+        </div>
+        <a asp-page="./Details" asp-route-id="@menu.menuID" class="btn btn-outline-primary">
+            View All (@menu.TotalItems items)
+        </a>
+    </div>
 
-<table class="table">
-    <thead>
-    <tr>
-        <th>Menu Name</th>
-        <th>Menu Description</th>
-        <th>Categories</th>
-        <th>Items Count</th>
-        @if (isAdmin)
+    <div class="menu-categories">
+        @foreach (var category in menu.Categories)
         {
-        <th>Admin Actions</th>
+        <span class="badge bg-info me-2">@category.name</span>
         }
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var menu in Model.Menus)
-    {
-    <tr class="menu-row" data-menu-id="@menu.menuID" style="cursor: pointer;">
-        <td>@menu.name</td>
-        <td>@menu.description</td>
-        <td>
-            <ul>
-                @foreach (var category in menu.Categories)
-                {
-                <li>@category.name</li>
-                }
-            </ul>
-        </td>
-        <td>@menu.TotalItems</td>
-        @if (isAdmin)
+    </div>
+
+    <div class="menu-items-grid">
+        @{
+        var displayItems = menu.MenuItems.Take(4);
+        }
+        @foreach (var item in displayItems)
         {
-        <td>
-            <a asp-page="./Edit" asp-route-id="@menu.menuID" class="btn btn-sm btn-outline-primary" title="Edit">
-                <i class="fa-solid fa-pen-to-square"></i>
-            </a>
-            <a asp-page="./Delete" asp-route-id="@menu.menuID" class="btn btn-sm btn-outline-danger" title="Delete">
-                <i class="fa-solid fa-trash-can"></i>
-            </a>
-        </td>
+        <div class="menu-item-card" data-item-id="@item.itemID">
+        @if (item.ImageData != null)
+            {
+            <img class="menu-item-image"
+                 src="data:image/jpg;base64,@Convert.ToBase64String(item.ImageData)"
+                 alt="@item.ImageDescription" />
+            }
+            <div class="menu-item-content">
+                <h5>@item.name</h5>
+                <p class="menu-item-description">@item.description</p>
+                <p class="menu-item-price">@item.price.ToString("C")</p>
+                
+                <!-- Add to cart functionality -->
+                <div class="menu-item-actions">
+                    @{
+                        var basketItem = Model.UserBasketItems.FirstOrDefault(bi => bi.ItemID == item.itemID);
+                        var itemQuantity = basketItem?.Quantity ?? 0;
+                    }
+
+                    @if (itemQuantity > 0)
+                    {
+                        <!-- Stepper for items already in basket -->
+                        <form method="post" class="updateQuantityForm" asp-page-handler="UpdateQuantity">
+                            <input type="hidden" name="itemId" value="@item.itemID" />
+                            <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+                            <div class="quantity-controls">
+                                <!-- Decrement Stepper -->
+                                <button type="button" class="btn btn-sm btn-outline-danger decrement-btn">
+                                    <i class="fa-solid fa-minus"></i>
+                                </button>
+                                <!-- Form Controller -->
+                                <input type="number" name="quantity" value="@itemQuantity" min="0" max="1000"
+                                       class="form-control mx-2 quantity-input"
+                                       style="width: fit-content; min-width: 50px; padding: 0.2em; display:inline-block;" />
+                                <!-- Increment Stepper -->
+                                <button type="button" class="btn btn-sm btn-outline-success increment-btn">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        <!-- "Add to Basket" button for items not in basket -->
+                        <form method="post" class="addToBasketForm" style="display:inline;">
+                            <input type="hidden" name="itemId" value="@item.itemID" />
+                            <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+                            <button type="button" class="btn btn-sm btn-outline-primary add-to-basket-btn">
+                                <i class="fa-solid fa-cart-plus"></i> Add to Basket
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
         }
-    </tr>
-    }
-    </tbody>
-</table>
+    </div>
+</div>
+}
+
 
 @section Scripts {
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const menuRows = document.querySelectorAll('.menu-row');
-
-        menuRows.forEach(row => {
-            row.addEventListener('click', function(e) {
-                // Don't navigate if clicking on action buttons
-                if (e.target.closest('a')) {
-                    return;
-                }
-
-                const menuId = this.getAttribute('data-menu-id');
-                window.location.href = './Menu/Details?id=' + menuId;
-            });
-        });
-    });
-</script>
+    <script src="/js/tempMessage.js"></script>
+    <script src="/js/menuCartFunctions/menuCart.js"></script>
+    <script src="/js/menuCartFunctions/sendUpdateRequest.js"></script>
+    <script src="/js/menuCartFunctions/stepperEventListener.js"></script>
 }
