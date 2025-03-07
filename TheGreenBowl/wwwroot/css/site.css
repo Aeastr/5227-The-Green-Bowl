@@ -131,6 +131,7 @@
   border-radius: 8px;
   overflow: hidden;
   transition: transform 0.2s;
+  cursor: pointer;
 }
 
 .menu-item-card:hover {
@@ -178,3 +179,21 @@
 }
 
 
+/* Hero Section with Background Image and Gradient Overlay */
+.hero-section {
+  background: linear-gradient(to right, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0.2) 100%),
+  url('../images/herobowl.jpg') no-repeat center/cover;
+  min-height: 500px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 3rem 0;
+}
+
+/* For mobile devices, adjust the gradient to be more opaque */
+@media (max-width: 768px) {
+  .hero-section {
+    background: linear-gradient(to right, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%),
+    url('../images/herobowl.jpg') no-repeat center/cover;
+  }
+}
