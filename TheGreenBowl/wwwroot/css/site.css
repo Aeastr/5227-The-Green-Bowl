@@ -197,3 +197,331 @@
     url('../images/herobowl.jpg') no-repeat center/cover;
   }
 }
+
+/* Base pill button */
+.btn-pill {
+  display: inline-block;
+  border-radius: 50px;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+/* Small size variant */
+.btn-pill.btn-sm {
+  padding: 0.4rem 1rem;
+  font-size: 0.9rem;
+}
+
+/* Outline style */
+.btn-pill.btn-outline {
+  background-color: transparent;
+  border: 1px solid currentColor;
+}
+
+/* Primary color (blue) */
+.btn-pill.btn-primary {
+  color: #4285F4;
+}
+
+.btn-pill.btn-primary:hover {
+  background-color: #4285F4;
+  color: white;
+}
+
+/* Success color (green) */
+.btn-pill.btn-success {
+  color: #3A5A40;
+}
+
+.btn-pill.btn-success:hover {
+  background-color: #3A5A40;
+  color: white;
+}
+
+/* Basket color (green) */
+.btn-pill.btn-basket {
+  color: #61805B;
+}
+
+.btn-pill.btn-basket:hover {
+  background-color: #61805B;
+  color: white;
+}
+
+/* Filled variants */
+.btn-pill.btn-filled {
+  color: white;
+}
+
+.btn-pill.btn-filled.btn-primary {
+  background-color: #4285F4;
+  border: 1px solid #4285F4;
+}
+
+.btn-pill.btn-filled.btn-primary:hover {
+  background-color: #3367D6;
+  border-color: #3367D6;
+}
+
+.btn-pill.btn-filled.btn-success {
+  background-color: #3A5A40;
+  border: 1px solid #3A5A40;
+}
+
+.btn-pill.btn-filled.btn-success:hover {
+  background-color: #2D4A33;
+  border-color: #2D4A33;
+}
+
+.btn-pill.btn-filled.btn-basket {
+  background-color: #61805B;
+  border: 1px solid #61805B;
+}
+
+.btn-pill.btn-filled.btn-basket:hover {
+  background-color: #556F4A;
+  border-color: #556F4A;
+}
+
+/* Floating button */
+.btn-floating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  font-size: 2rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.btn-floating:hover {
+  transform: scale(1.05);
+}
+
+/* Floating button colors */
+.btn-floating.btn-primary {
+  background-color: #4285F4;
+  color: white;
+}
+
+.btn-floating.btn-primary:hover {
+  background-color: #3367D6;
+}
+
+.btn-floating.btn-success {
+  background-color: #3A5A40;
+  color: #C5E1A5;
+}
+
+.btn-floating.btn-success:hover {
+  background-color: #2D4A33;
+}
+
+.btn-floating.btn-basket {
+  background-color: #61805B;
+  color: white;
+}
+
+.btn-floating.btn-basket:hover {
+  background-color: #556F4A;
+}
+
+/* Icon positioning */
+.icon-left {
+  margin-right: 0.5rem;
+}
+
+.icon-right {
+  margin-left: 0.5rem;
+}
+
+/* Quantity Controls */
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Quantity Input */
+.quantity-input {
+  border: 1px solid #ddd;
+  border-radius: 50px;
+  text-align: center;
+  width: 60px;
+  height: 40px;
+  padding: 0.5rem;
+  font-size: 1rem;
+  background-color: #fff;
+}
+/* Stepper Buttons - Using our pill button design */
+.btn-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  background-color: transparent;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+/* Decrement Button */
+.btn-stepper.btn-decrement {
+  color: #dc3545;
+}
+
+.btn-stepper.btn-decrement:hover {
+  background-color: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+
+/* Increment Button */
+.btn-stepper.btn-increment {
+  color: #61805B;
+}
+
+.btn-stepper.btn-increment:hover {
+  background-color: #61805B;
+  color: white;
+  border-color: #61805B;
+}
+
+/* Admin button - special orange color */
+.btn-pill.btn-admin {
+    background-color: #654933;
+    border: 1px solid #654933;
+    color: white;
+}
+
+.btn-pill.btn-admin:hover {
+    background-color: #75482E;
+    border-color: #75482E;
+}
+
+/* Enhanced dropdown items with descriptions */
+.dropdown-menu .dropdown-item {
+    padding: 0.5rem 1rem;
+    white-space: normal;
+}
+
+.dropdown-menu .dropdown-item small {
+    display: block;
+    margin-top: 0.25rem;
+}
+
+/* Make sure the search box stays properly sized */
+@media (min-width: 768px) {
+    .compact-search {
+        min-width: 300px;
+    }
+}
+
+/* Header and Search Container */
+.header-search-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+/* Page Title */
+.page-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 0;
+  color: #212529;
+}
+
+/* Compact Search */
+.compact-search {
+  display: flex;
+  align-items: center;
+  max-width: 400px;
+}
+
+.compact-search-input {
+  border: 1px solid #ddd;
+  border-radius: 50px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  width: 250px;
+  transition: all 0.3s ease;
+}
+
+.compact-search-input:focus {
+  outline: none;
+  border-color: #61805B;
+  box-shadow: 0 0 0 2px rgba(97, 128, 91, 0.2);
+}
+
+.compact-search-button {
+  margin-left: 0.5rem;
+  border-radius: 50px;
+  padding: 0.5rem 1rem;
+  background-color: #61805B;
+  color: white;
+  border: none;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.compact-search-button:hover {
+  background-color: #556F4A;
+}
+
+.compact-search-button i {
+  margin-right: 0.5rem;
+}
+
+
+/* Menu Section Styling */
+.menu-header h2 {
+  font-weight: bold;
+  margin-bottom: 0.1rem;
+  color: #212529;
+}
+
+.menu-header p {
+  color: #6c757d;
+  margin-bottom: 0.5rem;
+}
+
+/* Category Pills */
+.category-pill {
+  display: inline-block;
+  background-color: #A6B18E;
+  color: white;
+  border-radius: 50px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+  margin-right: 0.75rem;
+  margin-bottom: 0.75rem;
+  font-weight: normal;
+  font-style: italic;
+}
+
+@media (max-width: 767.98px) {
+  .compact-search {
+    width: 100%;
+  }
+
+  .compact-search-input {
+    flex-grow: 1;
+    width: auto;
+  }
+}

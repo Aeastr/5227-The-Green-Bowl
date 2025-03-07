@@ -13,29 +13,87 @@ bool isAdmin = User.IsInRole("Admin");
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Menus</h1>
-    @if (isAdmin)
-    {
-    <a asp-page="./Create" class="btn btn-success">
-        <i class="fa-solid fa-plus"></i> Add Menu
-    </a>
-    }
-</div>
 
-<div class="row mb-4">
-    <div class="col-md-6">
-        <form asp-page="./SearchResults" method="get" class="d-flex">
-            <div class="input-group">
-                <input type="text" name="q" class="form-control"
+<div class="mb-4 pt-3">
+    <!-- Desktop view: all elements on same line -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <!-- Title -->
+        <h1 class="page-title m-0">Menus</h1>
+        
+        <!-- Right side with admin button and search -->
+        <div class="d-none d-md-flex align-items-center">
+            @if (isAdmin)
+            {
+                <div class="dropdown me-3">
+                    <button class="btn-pill btn-filled btn-admin dropdown-toggle" type="button" id="menuAdminDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-shield-halved icon-left"></i> Admin
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuAdminDropdown">
+                        <li>
+                            <a class="dropdown-item" href="./Create">
+                                <div><i class="fa-solid fa-plus icon-left"></i> Quick Add</div>
+                                <small class="text-muted">Create a menu category</small>
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="./ManageMenus">
+                                <div><i class="fa-solid fa-edit icon-left"></i> Manage Menus</div>
+                                <small class="text-muted">Edit, Create and Manage Menus</small>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            }
+            
+            <form asp-page="./SearchResults" method="get" class="compact-search">
+                <input type="text" name="q" class="compact-search-input"
                        placeholder="Search menus and items..." required/>
-                <button type="submit" class="btn btn-outline-primary">
-                    <i class="fa-solid fa-search"></i> Search
+                <button type="submit" class="compact-search-button">
+                    <i class="fa-solid fa-search icon-left"></i> Search
                 </button>
-            </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Mobile view: search goes below the title -->
+    <div class="d-md-none d-flex justify-content-end mb-3">
+        <form asp-page="./SearchResults" method="get" class="compact-search">
+            <input type="text" name="q" class="compact-search-input"
+                   placeholder="Search menus and items..." required/>
+            <button type="submit" class="compact-search-button">
+                <i class="fa-solid fa-search icon-left"></i> Search
+            </button>
         </form>
     </div>
 </div>
+<hr class="my-4">
+
+<!-- Floating admin button for mobile -->
+@if (isAdmin)
+{
+    <div class="dropdown d-md-none">
+        <a class="btn-floating btn-admin" id="mobileAdminButton" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fa-solid fa-shield-halved"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="mobileAdminButton">
+            <li>
+                <a class="dropdown-item" href="./Create">
+                    <div><i class="fa-solid fa-plus icon-left"></i> Quick Add</div>
+                    <small class="text-muted">Create a menu category</small>
+                </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <a class="dropdown-item" href="./ManageMenus">
+                    <div><i class="fa-solid fa-edit icon-left"></i> Manage Menus</div>
+                    <small class="text-muted">Edit, Create and Manage Menus</small>
+                </a>
+            </li>
+        </ul>
+    </div>
+}
+
 
 @foreach (var menu in Model.Menus)
 {
@@ -44,18 +102,19 @@ bool isAdmin = User.IsInRole("Admin");
         <div>
             <h2>@menu.name</h2>
             <p>@menu.description</p>
+            <div class="menu-categories">
+                @foreach (var category in menu.Categories)
+                {
+                <span class="category-pill"># @category.name</span>
+                }
+            </div>
         </div>
-        <a asp-page="./Details" asp-route-id="@menu.menuID" class="btn btn-outline-primary">
-            View All (@menu.TotalItems items)
+        <a asp-page="./Details" asp-route-id="@menu.menuID" class="btn-pill btn-filled btn-success">
+            View All <i class="fa-solid fa-arrow-right icon-right" aria-hidden="true"></i>
         </a>
     </div>
 
-    <div class="menu-categories">
-        @foreach (var category in menu.Categories)
-        {
-        <span class="badge bg-info me-2">@category.name</span>
-        }
-    </div>
+    
 
     <div class="menu-items-grid">
         @{
@@ -85,24 +144,26 @@ bool isAdmin = User.IsInRole("Admin");
                     @if (itemQuantity > 0)
                     {
                         <!-- Stepper for items already in basket -->
-                        <form method="post" class="updateQuantityForm" asp-page-handler="UpdateQuantity">
-                            <input type="hidden" name="itemId" value="@item.itemID" />
-                            <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
-                            <div class="quantity-controls">
-                                <!-- Decrement Stepper -->
-                                <button type="button" class="btn btn-sm btn-outline-danger decrement-btn">
-                                    <i class="fa-solid fa-minus"></i>
-                                </button>
-                                <!-- Form Controller -->
-                                <input type="number" name="quantity" value="@itemQuantity" min="0" max="1000"
-                                       class="form-control mx-2 quantity-input"
-                                       style="width: fit-content; min-width: 50px; padding: 0.2em; display:inline-block;" />
-                                <!-- Increment Stepper -->
-                                <button type="button" class="btn btn-sm btn-outline-success increment-btn">
-                                    <i class="fa-solid fa-plus"></i>
-                                </button>
-                            </div>
-                        </form>
+                    <form method="post" class="updateQuantityForm" asp-page-handler="UpdateQuantity">
+                        <input type="hidden" name="itemId" value="@item.itemID" />
+                        <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+                        <div class="quantity-controls">
+                            <!-- Decrement Stepper -->
+                            <button type="button" class="btn-stepper btn-decrement decrement-btn">
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+
+                            <!-- Quantity Input -->
+                            <input type="number" name="quantity" value="@itemQuantity" min="0" max="1000"
+                                   class="quantity-input" />
+
+                            <!-- Increment Stepper -->
+                            <button type="button" class="btn-stepper btn-increment increment-btn">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                    </form>
+
                     }
                     else
                     {
@@ -110,8 +171,8 @@ bool isAdmin = User.IsInRole("Admin");
                         <form method="post" class="addToBasketForm" style="display:inline;">
                             <input type="hidden" name="itemId" value="@item.itemID" />
                             <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
-                            <button type="button" class="btn btn-sm btn-outline-primary add-to-basket-btn">
-                                <i class="fa-solid fa-cart-plus"></i> Add to Basket
+                            <button type="button" class="btn-pill btn-sm btn-outline btn-basket add-to-basket-btn">
+                                <i class="fa-solid fa-cart-plus icon-left"></i> Add to Basket
                             </button>
                         </form>
                     }
