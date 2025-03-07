@@ -105,7 +105,76 @@
 
 /* Menu Items Index Page */
 
-img.menuItemImage {
-  max-height: 150px;
+.menu-section {
+  margin-bottom: 2rem;
 }
+
+.menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.menu-categories {
+  margin-bottom: 1rem;
+}
+
+.menu-items-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+.menu-item-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+
+.menu-item-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.menu-item-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.menu-item-content {
+  padding: 1rem;
+}
+
+.menu-item-price {
+  font-weight: bold;
+  color: #28a745;
+}
+
+.menu-item-description {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0.5rem 0;
+}
+
+.basket-controls {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.quantity-input {
+  text-align: center;
+}
+
+.menu-item-card .btn {
+  transition: all 0.2s;
+}
+
+.menu-item-card .btn:hover {
+  transform: scale(1.05);
+}
+
 

@@ -2,10 +2,9 @@
 @model TheGreenBowl.Pages.Menu.DetailsModel
 
 @{
-    ViewData["Title"] = $"{Model.tblMenu.name} Menu";
-    bool isAdmin = User.IsInRole("Admin");
+ViewData["Title"] = $"{Model.tblMenu.name} Menu";
+bool isAdmin = User.IsInRole("Admin");
 }
-
 
 <!-- 
     This hidden form is used to generate an anti-forgery token, which is required for secure POST requests in ASP.NET Core!!
@@ -23,12 +22,12 @@
     <div>
         @if (isAdmin)
         {
-            <a asp-page="./Edit" asp-route-id="@Model.tblMenu.menuID" class="btn btn-outline-primary">
-                <i class="fa-solid fa-pen-to-square"></i> Edit Menu
-            </a>
-            <a asp-page="./Item/AddItem" asp-route-menuId="@Model.tblMenu.menuID" class="btn btn-success ms-2">
-                <i class="fa-solid fa-plus"></i> Add Item
-            </a>
+        <a asp-page="./Edit" asp-route-id="@Model.tblMenu.menuID" class="btn btn-outline-primary">
+            <i class="fa-solid fa-pen-to-square"></i> Edit Menu
+        </a>
+        <a asp-page="./Item/AddItem" asp-route-menuId="@Model.tblMenu.menuID" class="btn btn-success ms-2">
+            <i class="fa-solid fa-plus"></i> Add Item
+        </a>
         }
         <a asp-page="./Index" class="btn btn-outline-secondary ms-2">
             <i class="fa-solid fa-arrow-left"></i> Back to List
@@ -44,16 +43,16 @@
 <h5>Categories</h5>
 @if (Model.tblMenu.Categories?.Any() == true)
 {
-    <div class="mb-4">
-        @foreach (var category in Model.tblMenu.Categories)
-        {
-            <span class="badge bg-info me-2">@category.Category.name</span>
-        }
-    </div>
+<div class="mb-4">
+    @foreach (var category in Model.tblMenu.Categories)
+    {
+    <span class="badge bg-info me-2">@category.Category.name</span>
+    }
+</div>
 }
 else
 {
-    <p>No categories assigned to this menu.</p>
+<p>No categories assigned to this menu.</p>
 }
 
 <!-- Menu Contents --->
@@ -61,103 +60,74 @@ else
 <h5>Menu Items</h5>
 @if (Model.tblMenu.MenuItems?.Any() == true)
 {
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            @* We added display name properties to the model, so these should be user friendly  *@
-            <th>@Html.DisplayNameFor(model => model.tblMenu.MenuItems.First().menuItem.ImageData)</th>
-            <th>@Html.DisplayNameFor(model => model.tblMenu.MenuItems.First().menuItem.name)</th>
-            <th>@Html.DisplayNameFor(model => model.tblMenu.MenuItems.First().menuItem.description)</th>
-            <th>@Html.DisplayNameFor(model => model.tblMenu.MenuItems.First().menuItem.price)</th>
-            <th>Actions</th>
-            @* Only show the "Admin" column if the user is admin*@
-            @if (isAdmin)
-            {
-                <th>Admin</th>
-            }
-        </tr>
-        </thead>
-        <tbody>
-            @foreach (var menuItem in Model.tblMenu.MenuItems)
-            {
-                <tr class="menuItem-row" data-item-id="@menuItem.menuItem.itemID" style="cursor: pointer;">
-                    <td>
-                        @* Display the menu item image if available *@
-                        @if (menuItem.menuItem.ImageData != null)
-                        {
-                            <img class="menuItemImage" src="data:image/jpg;base64,@Convert.ToBase64String(menuItem.menuItem.ImageData)" alt="@menuItem.menuItem.ImageDescription" />
-                        }
-                    </td>
-                    <td>@menuItem.menuItem.name</td>
-                    <td>@menuItem.menuItem.description</td>
-                    <td>@menuItem.menuItem.price.ToString("C")</td>
-                    
-                    @* Show regardless of account auth, handler has logic for cases *@
-                    <td>
-                        @{
-                            var basketItem = Model.UserBasketItems.FirstOrDefault(bi => bi.ItemID == menuItem.menuItem.itemID);
-                            var itemQuantity = basketItem?.Quantity ?? 0;
-                        }
+<div class="menu-items-grid">
+    @foreach (var menuItem in Model.tblMenu.MenuItems)
+    {
+    <div class="menu-item-card" data-item-id="@menuItem.menuItem.itemID">
+        @if (menuItem.menuItem.ImageData != null)
+        {
+        <img class="menu-item-image"
+             src="data:image/jpg;base64,@Convert.ToBase64String(menuItem.menuItem.ImageData)"
+             alt="@menuItem.menuItem.ImageDescription" />
+        }
+        <div class="menu-item-content">
+            <h5>@menuItem.menuItem.name</h5>
+            <p class="menu-item-description">@menuItem.menuItem.description</p>
+            <p class="menu-item-price">@menuItem.menuItem.price.ToString("C")</p>
 
-                        @if (itemQuantity > 0)
-                        {
-                            <!-- Stepper for items already in basket, users can use steppers or type in the amount + updates as they do without refresh -->
-                            <form method="post" class="updateQuantityForm" asp-page-handler="UpdateQuantity">
-                                <input type="hidden" name="itemId" value="@menuItem.menuItem.itemID" />
-                                <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
-                                <!-- Decrement Stepper -->
-                                <button type="button" class="btn btn-sm btn-outline-danger decrement-btn">
-                                    <i class="fa-solid fa-minus"></i>
-                                </button>
-                                <!-- Form Controller -->
-                                <input type="number" name="quantity" value="@itemQuantity" min="0" max="1000"
-                                       class="form-control mx-2 quantity-input"
-                                       style="width: fit-content; min-width: 50px; padding: 0.2em; display:inline-block;" />
-                                <!-- Increment Stepper -->
-                                <button type="button" class="btn btn-sm btn-outline-success increment-btn">
-                                    <i class="fa-solid fa-plus"></i>
-                                </button>
-                            </form>
-                        }
-                        else
-                        {
-                            <!-- "Add to Basket" button for items not in basket -->
-                            <form method="post" class="addToBasketForm" style="display:inline;">
-                                <input type="hidden" name="itemId" value="@menuItem.menuItem.itemID" />
-                                <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
-                                <button type="button" class="btn btn-sm btn-outline-primary add-to-basket-btn">
-                                    <i class="fa-solid fa-cart-plus"></i> Add to Basket
-                                </button>
-                            </form>
+            <div class="menu-item-actions">
+                @{
+                var basketItem = Model.UserBasketItems.FirstOrDefault(bi => bi.ItemID == menuItem.menuItem.itemID);
+                var itemQuantity = basketItem?.Quantity ?? 0;
+                }
 
-                        }
-                    </td>
-
-                    @* We'll show admin options only if the user as admin abilities, these pages also have their own checks so it can't be circumvented *@
-                    @if (isAdmin)
-                    {
-                        <td>
-                            @if (isAdmin)
-                            {
-                            <a asp-page="./Item/EditItem" asp-route-menuId="@Model.tblMenu.menuID" asp-route-itemId="@menuItem.menuItem.itemID" class="btn btn-sm btn-outline-primary">
-                                <i class="fa-solid fa-pen"></i>
-                            </a>
-                            <a asp-page="./Item/RemoveItem" asp-route-menuId="@Model.tblMenu.menuID" asp-route-itemId="@menuItem.menuItem.itemID" class="btn btn-sm btn-outline-danger ms-1">
-                                <i class="fa-solid fa-trash"></i>
-                            </a>
-                            }
-                        </td>
-                    }
-                </tr>
-            }
-        </tbody>
-    </table>
-
-    @section Scripts {
-        <script src="/js/menuDetails.js"></script>
+                @if (itemQuantity > 0)
+                {
+                <!-- Stepper for items already in basket -->
+                <form method="post" class="updateQuantityForm" asp-page-handler="UpdateQuantity">
+                    <input type="hidden" name="itemId" value="@menuItem.menuItem.itemID" />
+                    <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+                    <div class="quantity-controls">
+                        <!-- Decrement Stepper -->
+                        <button type="button" class="btn btn-sm btn-outline-danger decrement-btn">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+                        <!-- Form Controller -->
+                        <input type="number" name="quantity" value="@itemQuantity" min="0" max="1000"
+                               class="form-control mx-2 quantity-input"
+                               style="width: fit-content; min-width: 50px; padding: 0.2em; display:inline-block;" />
+                        <!-- Increment Stepper -->
+                        <button type="button" class="btn btn-sm btn-outline-success increment-btn">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                </form>
+                }
+                else
+                {
+                <!-- "Add to Basket" button for items not in basket -->
+                <form method="post" class="addToBasketForm" style="display:inline;">
+                    <input type="hidden" name="itemId" value="@menuItem.menuItem.itemID" />
+                    <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+                    <button type="button" class="btn btn-sm btn-outline-primary add-to-basket-btn">
+                        <i class="fa-solid fa-cart-plus"></i> Add to Basket
+                    </button>
+                </form>
+                }
+            </div>
+        </div>
+    </div>
     }
+</div>
+
+@section Scripts {
+    <script src="/js/tempMessage.js"></script>
+    <script src="/js/menuCartFunctions/menuCart.js"></script>
+    <script src="/js/menuCartFunctions/sendUpdateRequest.js"></script>
+    <script src="/js/menuCartFunctions/stepperEventListener.js"></script>
+}
 }
 else
 {
-    <p>No menu items available for this menu.</p>
+<p>No menu items available for this menu.</p>
 }
