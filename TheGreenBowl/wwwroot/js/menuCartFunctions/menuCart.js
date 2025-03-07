@@ -8,22 +8,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const addToBasketUrl = currentPagePath + '?handler=AddToBasketAjax';
     const updateQuantityUrl = currentPagePath + '?handler=UpdateQuantity';
 
-    // Menu item click behavior (for Details page)
-    if (isDetailsPage) {
-        const menuItems = document.querySelectorAll('.menuItem-row');
-        menuItems.forEach(item => {
-            item.addEventListener('click', function(e) {
-                // Prevent navigation if clicking on an action button or form element
-                if (e.target.closest('a') || e.target.closest('button') || e.target.closest('input') ||
-                    e.target.closest('.updateQuantityForm') || e.target.closest('.addToBasketForm')) {
-                    return;
-                }
-                const itemID = this.getAttribute('data-item-id');
-                window.location.href = './Item/ItemDetails?id=' + itemID;
-            });
-        });
-    }
-
     // Card item click behavior (for card layouts)
     const menuCards = document.querySelectorAll('.menu-item-card');
     menuCards.forEach(card => {
@@ -34,7 +18,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             const itemID = this.getAttribute('data-item-id');
-            window.location.href = './Item/ItemDetails?id=' + itemID;
+            if (isDetailsPage) {
+                window.location.href = './Item/ItemDetails?id=' + itemID;
+            }
+            else{
+                window.location.href = './Menu/Item/ItemDetails?id=' + itemID;
+            }
         });
     });
 

@@ -63,8 +63,8 @@ bool isAdmin = User.IsInRole("Admin");
         }
         @foreach (var item in displayItems)
         {
-        <div class="menu-item-card">
-            @if (item.ImageData != null)
+        <div class="menu-item-card" data-item-id="@item.itemID">
+        @if (item.ImageData != null)
             {
             <img class="menu-item-image"
                  src="data:image/jpg;base64,@Convert.ToBase64String(item.ImageData)"
