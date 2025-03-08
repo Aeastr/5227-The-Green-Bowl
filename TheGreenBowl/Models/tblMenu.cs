@@ -18,6 +18,6 @@ namespace TheGreenBowl.Models
         public ICollection<tblMenuCategory> Categories { get; set; }
 
         // Navigation property for Menu-Item relationship
-        public ICollection<tblMenu_MenuItem> MenuItems { get; set; }
+        public ICollection<tblMenu_MenuItem> Menu_MenuItems { get; set; }
     }
 }

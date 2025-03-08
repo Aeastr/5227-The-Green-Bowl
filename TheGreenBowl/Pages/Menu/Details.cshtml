@@ -58,10 +58,10 @@ else
 <!-- Menu Contents --->
 
 <h5>Menu Items</h5>
-@if (Model.tblMenu.MenuItems?.Any() == true)
+@if (Model.tblMenu.Menu_MenuItems?.Any() == true)
 {
 <div class="menu-items-grid">
-    @foreach (var menuItem in Model.tblMenu.MenuItems)
+    @foreach (var menuItem in Model.tblMenu.Menu_MenuItems)
     {
     <div class="menu-item-card" data-item-id="@menuItem.menuItem.itemID">
         @if (menuItem.menuItem.ImageData != null)

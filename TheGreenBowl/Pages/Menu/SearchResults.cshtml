@@ -55,7 +55,7 @@ bool isAdmin = User.IsInRole("Admin");
         </div>
         }
 
-        @if (menu.MenuItems?.Any() == true)
+        @if (menu.Menu_MenuItems?.Any() == true)
         {
         <div class="table-responsive">
             <table class="table table-striped">
@@ -68,7 +68,7 @@ bool isAdmin = User.IsInRole("Admin");
                 </tr>
                 </thead>
                 <tbody>
-                @foreach (var menuItem in menu.MenuItems)
+                @foreach (var menuItem in menu.Menu_MenuItems)
                 {
                 <tr class="menuItem-row" data-item-id="@menuItem.menuItem.itemID" style="cursor: pointer;">
                     <td>

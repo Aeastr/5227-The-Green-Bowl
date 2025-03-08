@@ -51,7 +51,7 @@ namespace TheGreenBowl.Pages.Menu
             MenuId = menuId;
 
             var menu = await _context.tblMenus
-                .Include(m => m.MenuItems)
+                .Include(m => m.Menu_MenuItems)
                 .FirstOrDefaultAsync(m => m.menuID == menuId);
 
             if (menu == null)
@@ -62,7 +62,7 @@ namespace TheGreenBowl.Pages.Menu
             MenuName = menu.name;
 
             // Get all menu items that are not already in this menu
-            var existingItemIds = menu.MenuItems.Select(mi => mi.itemID).ToList();
+            var existingItemIds = menu.Menu_MenuItems.Select(mi => mi.itemID).ToList();
             
             AvailableItems = await _context.tblMenuItems
                 .Where(item => !existingItemIds.Contains(item.itemID))
@@ -79,7 +79,7 @@ namespace TheGreenBowl.Pages.Menu
         public async Task<IActionResult> OnPostAsync()
         {
             var menu = await _context.tblMenus
-                .Include(m => m.MenuItems)
+                .Include(m => m.Menu_MenuItems)
                 .FirstOrDefaultAsync(m => m.menuID == MenuId);
 
             if (menu == null)
@@ -116,7 +116,7 @@ namespace TheGreenBowl.Pages.Menu
                 await _context.SaveChangesAsync();
 
                 // Now add the new item to the menu
-                menu.MenuItems.Add(new tblMenu_MenuItem
+                menu.Menu_MenuItems.Add(new tblMenu_MenuItem
                 {
                     menuID = MenuId,
                     itemID = NewItem.itemID
@@ -131,7 +131,7 @@ namespace TheGreenBowl.Pages.Menu
                     return Page();
                 }
 
-                menu.MenuItems.Add(new tblMenu_MenuItem
+                menu.Menu_MenuItems.Add(new tblMenu_MenuItem
                 {
                     menuID = MenuId,
                     itemID = SelectedItemId.Value
@@ -144,7 +144,7 @@ namespace TheGreenBowl.Pages.Menu
 
         private async Task LoadAvailableItems(tblMenu menu)
         {
-            var existingItemIds = menu.MenuItems.Select(mi => mi.itemID).ToList();
+            var existingItemIds = menu.Menu_MenuItems.Select(mi => mi.itemID).ToList();
             
             AvailableItems = await _context.tblMenuItems
                 .Where(item => !existingItemIds.Contains(item.itemID))

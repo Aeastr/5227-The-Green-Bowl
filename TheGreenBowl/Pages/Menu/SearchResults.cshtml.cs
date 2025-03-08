@@ -45,20 +45,20 @@ namespace TheGreenBowl.Pages.Menu
 
             // Find all menus that have matching items or match the query directly
             var menus = await _context.tblMenus
-                .Include(m => m.MenuItems)
+                .Include(m => m.Menu_MenuItems)
                 .ThenInclude(mi => mi.menuItem)
                 .Include(m => m.Categories)
                 .ThenInclude(mc => mc.Category)
                 .Where(m => 
                     m.name.ToLower().Contains(query) || 
                     m.description.ToLower().Contains(query) ||
-                    m.MenuItems.Any(mi => matchingItems.Select(item => item.itemID).Contains(mi.menuItem.itemID)))
+                    m.Menu_MenuItems.Any(mi => matchingItems.Select(item => item.itemID).Contains(mi.menuItem.itemID)))
                 .ToListAsync();
 
             // Filter the menu items for each menu to only include relevant items
             foreach (var menu in menus)
             {
-                menu.MenuItems = menu.MenuItems
+                menu.Menu_MenuItems = menu.Menu_MenuItems
                     .Where(mi => matchingItems.Any(item => item.itemID == mi.menuItem.itemID))
                     .ToList();
             }

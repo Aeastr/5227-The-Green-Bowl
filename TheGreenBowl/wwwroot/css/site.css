@@ -126,12 +126,16 @@
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 }
 
+/* Menu Item Card Styles */
 .menu-item-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   border: 1px solid #ddd;
   border-radius: 8px;
   overflow: hidden;
-  transition: transform 0.2s;
-  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
 }
 
 .menu-item-card:hover {
@@ -146,7 +150,10 @@
 }
 
 .menu-item-content {
+  display: flex;
+  flex-direction: column;
   padding: 1rem;
+  flex-grow: 1; /* Take up all available space */
 }
 
 .menu-item-price {
@@ -154,10 +161,27 @@
   color: #28a745;
 }
 
+.menu-categories {
+  margin-top: auto;
+  margin-bottom: 1rem;
+}
+
+.menu-item-actions {
+  margin-top: auto;
+  display: flex;
+  gap: 0.5rem;
+}
+.menu-item-actions {
+  margin-top: auto;
+  display: flex;
+  gap: 0.5rem;
+}
+
 .menu-item-description {
   font-size: 0.9rem;
   color: #666;
   margin: 0.5rem 0;
+  flex-grow: 1;
 }
 
 .basket-controls {
@@ -198,7 +222,9 @@
   }
 }
 
-/* Base pill button */
+/* =========================
+   BASE STYLES
+   ========================= */
 .btn-pill {
   display: inline-block;
   border-radius: 50px;
@@ -206,20 +232,29 @@
   font-size: 1rem;
   text-decoration: none;
   transition: all 0.3s ease;
+  border: 1px solid transparent;
 }
 
-/* Small size variant */
+/* =========================
+   SIZE VARIANTS
+   ========================= */
 .btn-pill.btn-sm {
   padding: 0.4rem 1rem;
   font-size: 0.9rem;
 }
 
+/* =========================
+   STYLE VARIANTS
+   ========================= */
 /* Outline style */
 .btn-pill.btn-outline {
   background-color: transparent;
   border: 1px solid currentColor;
 }
 
+/* =========================
+   COLOR VARIANTS - OUTLINE
+   ========================= */
 /* Primary color (blue) */
 .btn-pill.btn-primary {
   color: #4285F4;
@@ -230,7 +265,17 @@
   color: white;
 }
 
-/* Success color (green) */
+/* Danger color (reds) */
+.btn-pill.btn-danger {
+  color: #C0423E;
+}
+
+.btn-pill.btn-danger:hover {
+  background-color: #C0423E;
+  color: white;
+}
+
+/* Success color */
 .btn-pill.btn-success {
   color: #3A5A40;
 }
@@ -250,14 +295,22 @@
   color: white;
 }
 
-/* Filled variants */
-.btn-pill.btn-filled {
-  color: white;
-}
-
+/* =========================
+   COLOR VARIANTS - FILLED
+   ========================= */
 .btn-pill.btn-filled.btn-primary {
   background-color: #4285F4;
-  border: 1px solid #4285F4;
+  border-color: #4285F4;
+}
+
+.btn-pill.btn-filled.btn-danger {
+  background-color: #C0423E;
+  border-color: #C0423E;
+}
+
+.btn-pill.btn-filled.btn-danger:hover {
+  background-color: #cd3b37;
+  border-color: #cd3b37;
 }
 
 .btn-pill.btn-filled.btn-primary:hover {
@@ -267,7 +320,7 @@
 
 .btn-pill.btn-filled.btn-success {
   background-color: #3A5A40;
-  border: 1px solid #3A5A40;
+  border-color: #3A5A40;
 }
 
 .btn-pill.btn-filled.btn-success:hover {
@@ -277,7 +330,7 @@
 
 .btn-pill.btn-filled.btn-basket {
   background-color: #61805B;
-  border: 1px solid #61805B;
+  border-color: #61805B;
 }
 
 .btn-pill.btn-filled.btn-basket:hover {
@@ -285,7 +338,16 @@
   border-color: #556F4A;
 }
 
-/* Floating button */
+/* Color for filled buttons */
+
+/* Filled style */
+.btn-pill.btn-filled {
+  color: white;
+}
+
+/* =========================
+   FLOATING BUTTON
+   ========================= */
 .btn-floating {
   display: flex;
   align-items: center;
@@ -301,6 +363,7 @@
   text-decoration: none;
   transition: all 0.3s ease;
   z-index: 1000;
+  color: white;
 }
 
 .btn-floating:hover {
@@ -310,7 +373,6 @@
 /* Floating button colors */
 .btn-floating.btn-primary {
   background-color: #4285F4;
-  color: white;
 }
 
 .btn-floating.btn-primary:hover {
@@ -328,7 +390,6 @@
 
 .btn-floating.btn-basket {
   background-color: #61805B;
-  color: white;
 }
 
 .btn-floating.btn-basket:hover {

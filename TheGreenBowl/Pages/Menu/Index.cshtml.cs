@@ -43,7 +43,7 @@ namespace TheGreenBowl.Pages.Menu
             Menus = await _context.tblMenus
                 .Include(m => m.Categories)
                 .ThenInclude(mc => mc.Category)
-                .Include(m => m.MenuItems)
+                .Include(m => m.Menu_MenuItems)
                 .ThenInclude(mi => mi.menuItem)
                 .Select(menu => new MenuViewModel
                 {
@@ -51,7 +51,7 @@ namespace TheGreenBowl.Pages.Menu
                     name = menu.name,
                     description = menu.description,
                     Categories = menu.Categories.Select(mc => mc.Category).ToList(),
-                    MenuItems = menu.MenuItems.Select(mi => new MenuItemViewModel
+                    MenuItems = menu.Menu_MenuItems.Select(mi => new MenuItemViewModel
                     {
                         itemID = mi.menuItem.itemID,
                         name = mi.menuItem.name,
@@ -60,7 +60,7 @@ namespace TheGreenBowl.Pages.Menu
                         ImageData = mi.menuItem.ImageData,
                         ImageDescription = mi.menuItem.ImageDescription
                     }).ToList(),
-                    TotalItems = menu.MenuItems.Count
+                    TotalItems = menu.Menu_MenuItems.Count
                 })
                 .ToListAsync();
     
@@ -218,7 +218,7 @@ namespace TheGreenBowl.Pages.Menu
         }
     }
 
-    public class MenuViewModel
+    public partial class MenuViewModel
     {
         public int menuID { get; set; }
         public string name { get; set; }

@@ -104,7 +104,7 @@ namespace TheGreenBowl.Data
 
             modelBuilder.Entity<tblMenu_MenuItem>()
                 .HasOne(mm => mm.menu) // tblMenu_MenuItem -> tblMenu
-                .WithMany(m => m.MenuItems) // Define the navigation property in tblMenu
+                .WithMany(m => m.Menu_MenuItems) // Define the navigation property in tblMenu
                 .HasForeignKey(mm => mm.menuID);
 
             modelBuilder.Entity<tblMenu_MenuItem>()

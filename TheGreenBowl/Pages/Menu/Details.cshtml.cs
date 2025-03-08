@@ -44,7 +44,7 @@ namespace TheGreenBowl.Pages.Menu
 
             // Load the menu with its related menu items and categories
             var tblmenu = await _context.tblMenus
-                .Include(m => m.MenuItems) // Include the relationship to MenuItems
+                .Include(m => m.Menu_MenuItems) // Include the relationship to MenuItems
                 .ThenInclude(mm => mm.menuItem) // Include the actual menu item data
                 .Include(m => m.Categories) // Include the relationship to Categories
                 .ThenInclude(mc => mc.Category) // Include the actual category data
